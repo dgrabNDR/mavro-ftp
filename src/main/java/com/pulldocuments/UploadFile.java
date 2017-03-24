@@ -83,7 +83,7 @@ public class UploadFile {
 			*/
 			FTPClient ftpClient = new FTPClient();
 	        try {
-	            ftpClient.connect(params.get("ftphost"));
+	            ftpClient.connect(params.get("ftphost"),22);
 	            showServerReply(ftpClient);
 	            int replyCode = ftpClient.getReplyCode();
 	            if (!FTPReply.isPositiveCompletion(replyCode)) {
