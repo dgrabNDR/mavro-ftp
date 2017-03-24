@@ -112,11 +112,11 @@ public class UploadFile {
 			JSch jsch = new JSch();
 	        Session session = null;
 	        try {
-	            session = jsch.getSession("username", "127.0.0.1", 22);
+	            session = jsch.getSession(params.get("ftpuser"), params.get("ftphost"), 22);
 	            Properties prop = new Properties();
 	            prop.setProperty("StrictHostKeyChecking", "no");
 	            session.setConfig(prop);
-	            session.setPassword("password");
+	            session.setPassword(params.get("ftppass"));
 	            session.connect();
 
 	            Channel channel = session.openChannel("sftp");
