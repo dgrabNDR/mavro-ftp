@@ -10,7 +10,7 @@
     </welcome-file-list>
     
   <servlet>
-    <servlet-name>encryptandupload</servlet-name>
+    <servlet-name>pulldocuments</servlet-name>
     <servlet-class>main.java.com.pulldocuments.PullDocuments</servlet-class>
   </servlet>
 
