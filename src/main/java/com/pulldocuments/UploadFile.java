@@ -16,6 +16,7 @@ import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPSClient;
 import org.apache.commons.net.ftp.FTPReply;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
@@ -81,7 +82,7 @@ public class UploadFile {
 
 			sftp.logout();
 			*/
-			FTPClient ftpClient = new FTPClient();
+			FTPSClient ftpClient = new FTPSClient();
 	        try {
 	            ftpClient.connect(params.get("ftphost"),22);
 	            showServerReply(ftpClient);
