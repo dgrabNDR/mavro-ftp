@@ -13,10 +13,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPSClient;
 import org.apache.commons.net.ftp.FTPReply;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
@@ -29,6 +29,12 @@ import org.apache.http.impl.client.HttpClients;
 
 import main.java.com.salesforce.SalesforceConnector;
 
+import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Session;
+import com.jcraft.jsch.SftpException;
 import com.sforce.soap.partner.sobject.SObject;
 import com.sforce.ws.ConnectionException;
 
@@ -81,10 +87,10 @@ public class UploadFile {
 			System.out.println(res);
 
 			sftp.logout();
-			*/
-			FTPSClient ftpClient = new FTPSClient();
+			
+			FTPClient ftpClient = new FTPClient();
 	        try {
-	            ftpClient.connect(params.get("ftphost"),22);
+	            ftpClient.connect(params.get("ftphost"));
 	            showServerReply(ftpClient);
 	            int replyCode = ftpClient.getReplyCode();
 	            if (!FTPReply.isPositiveCompletion(replyCode)) {
@@ -100,9 +106,29 @@ public class UploadFile {
 	                System.out.println("LOGGED IN SERVER");
 	            }
 	        } catch (IOException ex) {
-		    showServerReply(ftpClient);
 	            System.out.println("Oops! Something wrong happened");
 	            ex.printStackTrace();
+	        }*/
+			JSch jsch = new JSch();
+	        Session session = null;
+	        try {
+	            session = jsch.getSession("username", "127.0.0.1", 22);
+	            Properties prop = new Properties();
+	            prop.setProperty("StrictHostKeyChecking", "no");
+	            session.setConfig(prop);
+	            session.setPassword("password");
+	            session.connect();
+
+	            Channel channel = session.openChannel("sftp");
+	            channel.connect();
+	            ChannelSftp sftpChannel = (ChannelSftp) channel;
+	            sftpChannel.get("remotefile.txt", "localfile.txt");
+	            sftpChannel.exit();
+	            session.disconnect();
+	        } catch (JSchException e) {
+	            e.printStackTrace();  
+	        } catch (SftpException e) {
+	            e.printStackTrace();
 	        }
 		}
 		catch(Exception ex){
