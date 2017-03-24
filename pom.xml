@@ -75,27 +75,22 @@
         	<groupId>commons-vfs</groupId>
         	<artifactId>commons-vfs</artifactId>
         	<version>1.0</version>
-        </dependency>
-        <dependency>
-			<groupId>org.bouncycastle</groupId>
-			<artifactId>bcprov-jdk15on</artifactId>
-			<version>1.50</version>
-	    	</dependency>     
-		<dependency>                    
-			<groupId>com.itextpdf.tool</groupId>
-			<artifactId>xmlworker</artifactId>
-			<version>5.5.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.itextpdf</groupId>
-			<artifactId>itextpdf</artifactId>
-			<version>5.5.0</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>2.5</version>
-		</dependency>
+        </dependency>         
+	<dependency>                    
+		<groupId>com.itextpdf.tool</groupId>
+		<artifactId>xmlworker</artifactId>
+		<version>5.5.0</version>
+	</dependency>
+	<dependency>
+		<groupId>com.itextpdf</groupId>
+		<artifactId>itextpdf</artifactId>
+		<version>5.5.0</version>
+	</dependency>
+	<dependency>
+		<groupId>commons-io</groupId>
+		<artifactId>commons-io</artifactId>
+		<version>2.5</version>
+	</dependency>
     </dependencies>
 
     <build>
