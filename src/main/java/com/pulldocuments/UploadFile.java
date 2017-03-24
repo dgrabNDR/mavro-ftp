@@ -81,7 +81,7 @@ public class UploadFile {
 			    System.out.println("connecting to channel...");
 			    channel.connect();
 			    ChannelSftp sftpChannel = (ChannelSftp) channel;
-			    System.out.println("pwd: "+sftpChannel.pwd())
+			    System.out.println("pwd: "+sftpChannel.pwd());
 			    sftpChannel.exit();
 			    session.disconnect();
 			} catch (JSchException e) {
