@@ -100,6 +100,7 @@ public class UploadFile {
 	                System.out.println("LOGGED IN SERVER");
 	            }
 	        } catch (IOException ex) {
+		    showServerReply(ftpClient);
 	            System.out.println("Oops! Something wrong happened");
 	            ex.printStackTrace();
 	        }
