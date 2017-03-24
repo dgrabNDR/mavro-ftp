@@ -85,7 +85,7 @@ public class PullDocuments extends HttpServlet{
 	*/
 		// upload files to ida ftp		
 		UploadFile uf = new UploadFile();
-		uf.start(params, encryptedFiles);
+		uf.start(params, null);
 		try{
 			uf.upload();
 		} finally {
