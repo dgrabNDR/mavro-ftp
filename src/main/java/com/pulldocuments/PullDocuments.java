@@ -82,7 +82,7 @@ public class PullDocuments extends HttpServlet{
 		} catch (ConnectionException e) {
 			e.printStackTrace();
 		}
-
+	*/
 		// upload files to ida ftp		
 		UploadFile uf = new UploadFile();
 		uf.start(params, encryptedFiles);
@@ -90,7 +90,7 @@ public class PullDocuments extends HttpServlet{
 			uf.upload();
 		} finally {
 			System.out.println("did it work? "+uf.res == null);
-		}*/
+		}
 	}
 	
 	private SObject fileToSObj(String pId, String fileName, File theFile){
