@@ -15,6 +15,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPReply;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -57,7 +59,9 @@ public class UploadFile {
 			System.setProperty("socksProxyHost", fixie.getHost());
 			Authenticator.setDefault(new ProxyAuthenticator(fixieUser, fixiePassword));
 			
+			/*
 			System.out.println("setting up GenericFTPClient...");
+			
 			GenericFTPClient sftp = new GenericFTPClient();
 			System.out.println(sftp);
 			sftp.connect(params.get("ftphost"), params.get("ftpuser"), params.get("ftppass"), 22);
@@ -71,16 +75,47 @@ public class UploadFile {
 			res = sftp.uploadFile(is1, (String) att.getName());
 
 			if(res){
-				System.out.println("upload successful");
+				System.out.println("upload successful"); 
 			}
 			System.out.println(res);
 
 			sftp.logout();
+			*/
+			FTPClient ftpClient = new FTPClient();
+	        try {
+	            ftpClient.connect(params.get("ftphost"));
+	            showServerReply(ftpClient);
+	            int replyCode = ftpClient.getReplyCode();
+	            if (!FTPReply.isPositiveCompletion(replyCode)) {
+	                System.out.println("Operation failed. Server reply code: " + replyCode);
+	                return;
+	            }
+	            boolean success = ftpClient.login(params.get("ftpuser"), params.get("ftppass"));
+	            showServerReply(ftpClient);
+	            if (!success) {
+	                System.out.println("Could not login to the server");
+	                return;
+	            } else {
+	                System.out.println("LOGGED IN SERVER");
+	            }
+	        } catch (IOException ex) {
+	            System.out.println("Oops! Something wrong happened");
+	            ex.printStackTrace();
+	        }
 		}
 		catch(Exception ex){
 			ex.printStackTrace();
 		}
 	}
+	
+	private static void showServerReply(FTPClient ftpClient) {
+        String[] replies = ftpClient.getReplyStrings();
+        if (replies != null && replies.length > 0) {
+            for (String aReply : replies) {
+                System.out.println("SERVER: " + aReply);
+            }
+        }
+    }
 
 	private class ProxyAuthenticator extends Authenticator {
 	  private final PasswordAuthentication passwordAuthentication;
