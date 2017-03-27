@@ -62,7 +62,7 @@ public class UploadFile {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
 			str = reader.readLine();
 			System.out.println("ip before fixie: "+str);
-/*			
+			
 			// sets static ip addresses 
 			System.out.println("Normal IP Address => "+InetAddress.getLocalHost().getHostAddress());
 			System.out.println("setting up fixie...");
@@ -82,7 +82,7 @@ public class UploadFile {
 			reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
 			str = reader.readLine();
 			System.out.println("ip after fixie: "+str);
-*/			
+			
 			JSch jsch = new JSch();
 	        	Session session = null;
 			try {
