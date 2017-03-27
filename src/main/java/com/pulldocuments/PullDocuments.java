@@ -45,7 +45,7 @@ public class PullDocuments extends HttpServlet{
 		parameters.putAll(CredentialManager.getLogin());
 		this.params = parameters;
 		System.out.println("parsing request body parameters...");	
-		
+		/*
 		// login to salesforce and pull attachment
 		sc = new SalesforceConnector(params.get("Username"),params.get("Password"),params.get("environment"));
 		ArrayList<SObject> attachments = new ArrayList<SObject>();		
@@ -57,7 +57,7 @@ public class PullDocuments extends HttpServlet{
 		} catch (ConnectionException e1) {
 			e1.printStackTrace();
 		}
-		/*
+		
 		ArrayList<SObject> encryptedSObjs = new ArrayList<SObject>();
 		ArrayList<File> encryptedFiles = new ArrayList<File>();
 		
