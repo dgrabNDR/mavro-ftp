@@ -62,7 +62,7 @@ public class UploadFile {
 		    BufferedReader reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
 		    str = reader.readLine();
 		    System.out.println("ip: "+str);
-			
+/*			
 			// sets static ip addresses 
 			System.out.println("Normal IP Address => "+InetAddress.getLocalHost().getHostAddress());
 			System.out.println("setting up fixie...");
@@ -75,7 +75,7 @@ public class UploadFile {
 			System.out.println("fixie u: "+fixieUser+" ,p: "+fixiePassword);
 			System.setProperty("socksProxyHost", fixie.getHost());
 			Authenticator.setDefault(new ProxyAuthenticator(fixieUser, fixiePassword));
-
+*/
 			connection = new URL("http://checkip.amazonaws.com/");
 		    con = connection.openConnection();
 		    str = null;
