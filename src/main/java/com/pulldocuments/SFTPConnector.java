@@ -98,7 +98,10 @@ public class SFTPConnector {
 	            System.out.println("connecting to channel...");
 	            channel.connect();
 	            sftpChannel = (ChannelSftp) channel;
+	            
 	            System.out.println("connected!  pwd: "+sftpChannel.pwd());
+	            sftpChannel.cd("\\\\MAVRO\\DataTest\\Customer\\Output");
+	            System.out.println("pwd: "+sftpChannel.pwd());
 	            //return sftpChannel;
 	        } catch (JSchException e) {
 	            e.printStackTrace();  
@@ -112,17 +115,8 @@ public class SFTPConnector {
 	public void disconnect(){
 		System.out.println("disconnecting...");
 		sftpChannel.exit();
-        	session.disconnect();
+        session.disconnect();
 	}
-	
-	private static void showServerReply(FTPClient ftpClient) {
-        String[] replies = ftpClient.getReplyStrings();
-        if (replies != null && replies.length > 0) {
-            for (String aReply : replies) {
-                System.out.println("SERVER: " + aReply);
-            }
-        }
-    }
 
 	private class ProxyAuthenticator extends Authenticator {
 	  private final PasswordAuthentication passwordAuthentication;
@@ -134,21 +128,5 @@ public class SFTPConnector {
 	  protected PasswordAuthentication getPasswordAuthentication() {
 	    return passwordAuthentication;
 	  }
-	}
-	
-	public byte[] readFile(File file) throws IOException{
-		InputStream is = new FileInputStream(file);
-		long length = file.length();
-		byte[] bytes = new byte[(int)length];
-		int offset = 0;
-        int numRead = 0;
-        while (offset < bytes.length && (numRead=is.read(bytes, offset, bytes.length-offset)) >= 0) {
-            offset += numRead;
-        }
-        return bytes;
-	}
-	
-	public byte[] base64ToByte(String data) throws Exception {
-		return Base64.decodeBase64(data.getBytes());
 	}
 }
