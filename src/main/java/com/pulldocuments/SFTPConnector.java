@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Vector;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.net.ftp.FTPClient;
@@ -100,8 +101,11 @@ public class SFTPConnector {
 	            sftpChannel = (ChannelSftp) channel;
 	            
 	            System.out.println("connected!  pwd: "+sftpChannel.pwd());
-	            sftpChannel.cd("\\\\MAVRO\\DataTest\\Customer\\Output");
-	            System.out.println("pwd: "+sftpChannel.pwd());
+	            Vector list = sftpChannel.ls("*");
+	            Object[] theList = list.toArray();
+	            for(Object obj : theList){
+	            	 System.out.println(obj);
+	            }
 	            //return sftpChannel;
 	        } catch (JSchException e) {
 	            e.printStackTrace();  
