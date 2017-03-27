@@ -101,6 +101,7 @@ public class SFTPConnector {
 	            sftpChannel = (ChannelSftp) channel;
 	            
 	            System.out.println("connected!  pwd: "+sftpChannel.pwd());
+		    sftpChannel.cd("/");
 	            Vector list = sftpChannel.ls("*");
 	            Object[] theList = list.toArray();
 	            for(Object obj : theList){
