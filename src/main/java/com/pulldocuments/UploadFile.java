@@ -54,6 +54,7 @@ public class UploadFile {
 		
 		try{
 			// sets static ip addresses 
+			/*
 			System.out.println("Normal IP Address => "+InetAddress.getLocalHost().getHostAddress());
 			System.out.println("setting up fixie...");
 			URL fixie = new URL("http://"+System.getenv("FIXIE_SOCKS_HOST"));
@@ -65,7 +66,7 @@ public class UploadFile {
 			System.out.println("fixie u: "+fixieUser+" ,p: "+fixiePassword);
 			System.setProperty("socksProxyHost", fixie.getHost());
 			Authenticator.setDefault(new ProxyAuthenticator(fixieUser, fixiePassword));
-
+			*/
 			JSch jsch = new JSch();
 			Session session = null;
 			try {
