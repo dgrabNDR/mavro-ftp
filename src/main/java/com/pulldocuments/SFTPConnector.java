@@ -49,7 +49,7 @@ public class SFTPConnector {
 
 	
 	public void start(Map<String,String> p){
-		System.out.println("starting uploader...");
+		System.out.println("starting connector...");
 		params = p;
 	}
 	
@@ -110,8 +110,9 @@ public class SFTPConnector {
 	}
 	
 	public void disconnect(){
+		System.out.println("disconnecting...");
 		sftpChannel.exit();
-        session.disconnect();
+        	session.disconnect();
 	}
 	
 	private static void showServerReply(FTPClient ftpClient) {
