@@ -76,10 +76,10 @@ public class UploadFile {
 			System.setProperty("socksProxyHost", fixie.getHost());
 			Authenticator.setDefault(new ProxyAuthenticator(fixieUser, fixiePassword));
 
-			URL connection = new URL("http://checkip.amazonaws.com/");
-		    URLConnection con = connection.openConnection();
-		    String str = null;
-		    BufferedReader reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
+			connection = new URL("http://checkip.amazonaws.com/");
+		    con = connection.openConnection();
+		    str = null;
+		    reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
 		    str = reader.readLine();
 		    System.out.println("ip: "+str);
 			
