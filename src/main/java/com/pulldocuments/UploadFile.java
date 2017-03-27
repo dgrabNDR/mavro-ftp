@@ -57,11 +57,11 @@ public class UploadFile {
 		
 		try{
 			URL connection = new URL("http://checkip.amazonaws.com/");
-		    URLConnection con = connection.openConnection();
-		    String str = null;
-		    BufferedReader reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
-		    str = reader.readLine();
-		    System.out.println("ip: "+str);
+			URLConnection con = connection.openConnection();
+			String str = null;
+			BufferedReader reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
+			str = reader.readLine();
+			System.out.println("ip before fixie: "+str);
 /*			
 			// sets static ip addresses 
 			System.out.println("Normal IP Address => "+InetAddress.getLocalHost().getHostAddress());
@@ -75,38 +75,38 @@ public class UploadFile {
 			System.out.println("fixie u: "+fixieUser+" ,p: "+fixiePassword);
 			System.setProperty("socksProxyHost", fixie.getHost());
 			Authenticator.setDefault(new ProxyAuthenticator(fixieUser, fixiePassword));
-*/
+
 			connection = new URL("http://checkip.amazonaws.com/");
-		    con = connection.openConnection();
-		    str = null;
-		    reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
-		    str = reader.readLine();
-		    System.out.println("ip: "+str);
-			
+			con = connection.openConnection();
+			str = null;
+			reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
+			str = reader.readLine();
+			System.out.println("ip after fixie: "+str);
+*/			
 			JSch jsch = new JSch();
-	        Session session = null;
-	        try {
-	            session = jsch.getSession(params.get("ftpuser"), params.get("ftphost"), 22);
-	            Properties prop = new Properties();
-	            prop.setProperty("StrictHostKeyChecking", "no");
-	            session.setConfig(prop);
-	            session.setPassword(params.get("ftppass"));	            
-	            System.out.println("user: "+params.get("ftpuser")+" / pass: "+params.get("ftppass")+" / host: "+params.get("ftphost"));
-	            System.out.println("connecting to session...");
-	            session.connect();
-	            Channel channel = session.openChannel("sftp");
-	            System.out.println("connecting to channel...");
-	            channel.connect();
-	            ChannelSftp sftpChannel = (ChannelSftp) channel;
-	            System.out.println("pwd: "+sftpChannel.pwd());
-	            sftpChannel.get("remotefile.txt", "localfile.txt");
-	            sftpChannel.exit();
-	            session.disconnect();
-	        } catch (JSchException e) {
-	            e.printStackTrace();  
-	        } catch (SftpException e) {
-	            e.printStackTrace();
-	        }
+	        	Session session = null;
+			try {
+			    session = jsch.getSession(params.get("ftpuser"), params.get("ftphost"), 22);
+			    Properties prop = new Properties();
+			    prop.setProperty("StrictHostKeyChecking", "no");
+			    session.setConfig(prop);
+			    session.setPassword(params.get("ftppass"));	            
+			    System.out.println("user: "+params.get("ftpuser")+" / pass: "+params.get("ftppass")+" / host: "+params.get("ftphost"));
+			    System.out.println("connecting to session...");
+			    session.connect();
+			    Channel channel = session.openChannel("sftp");
+			    System.out.println("connecting to channel...");
+			    channel.connect();
+			    ChannelSftp sftpChannel = (ChannelSftp) channel;
+			    System.out.println("pwd: "+sftpChannel.pwd());
+			    sftpChannel.get("remotefile.txt", "localfile.txt");
+			    sftpChannel.exit();
+			    session.disconnect();
+			} catch (JSchException e) {
+			    e.printStackTrace();  
+			} catch (SftpException e) {
+			    e.printStackTrace();
+			}
 		}
 		catch(Exception ex){
 			ex.printStackTrace();
