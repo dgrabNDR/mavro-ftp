@@ -37,7 +37,7 @@ public class PullDocuments extends HttpServlet{
 	Map<String,String> params = new HashMap<String,String>();
 	
 	@Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws  IOException {
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws  IOException {
 		Gson gson = new Gson();
 		Map<String,String> parameters = new HashMap<String,String>();		
 		String paramStr = getBody(req);
@@ -56,12 +56,12 @@ public class PullDocuments extends HttpServlet{
 			connector.connect();
 			connector.sftpChannel.pwd();
 			System.out.println("pwd: "+connector.sftpChannel.pwd());
-            Vector list = connector.sftpChannel.ls("*");
-            Object[] theList = list.toArray();
+			Vector list = connector.sftpChannel.ls("*");
+			Object[] theList = list.toArray();
             // display contents of directory
-            for(Object obj : theList){
-            	 System.out.println(obj);
-            }
+			for(Object obj : theList){
+				System.out.println(obj);
+			}
 			// do the things
 			
 			/*
