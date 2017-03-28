@@ -1,46 +1,21 @@
 package main.java.com.pulldocuments;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.Authenticator;
 import java.net.InetAddress;
 import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Vector;
-
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPReply;
-import org.apache.http.HttpHost;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-
-import main.java.com.salesforce.SalesforceConnector;
 
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
-import com.jcraft.jsch.SftpException;
-import com.sforce.soap.partner.sobject.SObject;
-import com.sforce.ws.ConnectionException;
 
 public class SFTPConnector {
 	public Map<String,String> params = new HashMap<String,String>();
@@ -98,10 +73,8 @@ public class SFTPConnector {
 	            Channel channel = session.openChannel("sftp");
 	            System.out.println("connecting to channel...");
 	            channel.connect();
-	            sftpChannel = (ChannelSftp) channel;
-	            
-	            System.out.println("connected!");  
-	            //return sftpChannel;
+	            sftpChannel = (ChannelSftp) channel;	            
+	            System.out.println("connected!");
 	        } catch (JSchException e) {
 	            e.printStackTrace();  
 	        }
