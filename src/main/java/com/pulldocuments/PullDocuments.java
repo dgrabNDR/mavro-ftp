@@ -1,16 +1,9 @@
 package main.java.com.pulldocuments;
 
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.ConnectException;
-import java.net.InetAddress;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +11,6 @@ import java.util.Vector;
 
 import com.jcraft.jsch.SftpException;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,8 +18,6 @@ import javax.servlet.http.HttpServletResponse;
 import main.java.com.salesforce.*;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.IOUtils;
-
 import com.google.gson.Gson;
 import com.sforce.soap.partner.sobject.SObject;
 import com.sforce.ws.ConnectionException;
@@ -58,7 +48,7 @@ public class PullDocuments extends HttpServlet{
 			System.out.println("pwd: "+connector.sftpChannel.pwd());
 			Vector list = connector.sftpChannel.ls("*");
 			Object[] theList = list.toArray();
-            // display contents of directory
+			// display contents of directory
 			for(Object obj : theList){
 				System.out.println(obj);
 			}
@@ -122,9 +112,9 @@ public class PullDocuments extends HttpServlet{
 		BufferedReader br = req.getReader();
 		StringBuilder sb = new StringBuilder();  
 		String str;
-	    while( (str = br.readLine()) != null ){
+		while( (str = br.readLine()) != null ){
 	        sb.append(str);
-		 } 
+		} 
 	    return sb.toString().isEmpty() ? "{}" : sb.toString();
 	}
 	
