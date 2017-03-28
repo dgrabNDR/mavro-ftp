@@ -100,17 +100,7 @@ public class SFTPConnector {
 	            channel.connect();
 	            sftpChannel = (ChannelSftp) channel;
 	            
-	            System.out.println("connected!  pwd: "+sftpChannel.pwd());
-		    //sftpChannel.cd("/");
-		    //System.out.println("pwd: "+sftpChannel.pwd());
-		    //sftpChannel.cd("/");
-		    //System.out.println("pwd: "+sftpChannel.pwd());
-	            Vector list = sftpChannel.ls("*");
-	            Object[] theList = list.toArray();
-		    // display contents of directory
-	            for(Object obj : theList){
-	            	 System.out.println(obj);
-	            }
+	            System.out.println("connected!");  
 	            //return sftpChannel;
 	        } catch (JSchException e) {
 	            e.printStackTrace();  

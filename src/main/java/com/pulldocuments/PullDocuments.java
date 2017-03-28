@@ -51,6 +51,14 @@ public class PullDocuments extends HttpServlet{
 		connector.start(params);
 		try{
 			connector.connect();
+			connector.sftpChannel.pwd();
+			System.out.println("pwd: "+connector.sftpChannel.pwd());
+            Vector list = connector.sftpChannel.ls("*");
+            Object[] theList = list.toArray();
+            // display contents of directory
+            for(Object obj : theList){
+            	 System.out.println(obj);
+            }
 			// do the things
 			
 			/*
