@@ -101,7 +101,7 @@ public class SFTPConnector {
 	            sftpChannel = (ChannelSftp) channel;
 	            
 	            System.out.println("connected!  pwd: "+sftpChannel.pwd());
-		    //sftpChannel.cd("/");
+		    sftpChannel.cd("/");
 		    //System.out.println("pwd: "+sftpChannel.pwd());
 		    //sftpChannel.cd("/");
 		    //System.out.println("pwd: "+sftpChannel.pwd());
