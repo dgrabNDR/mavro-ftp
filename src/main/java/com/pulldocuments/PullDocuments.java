@@ -16,6 +16,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
+import com.jcraft.jsch.SftpException;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -95,6 +97,8 @@ public class PullDocuments extends HttpServlet{
 			*/
 			
 			connector.disconnect();
+		} catch (SftpException e){
+			
 		} finally {}
 		
 	}
