@@ -158,14 +158,13 @@ public class PullDocuments extends HttpServlet{
 	
 	private String progressBar(Integer total, Integer complete){
 		Double percent = (double) ((complete/total)*100);
-		Double pct = percent/10;
+		Integer pct = (int)Math.round(percent/10);
 		String pb = "|";
-		for(Integer x = 0; x < percent/10; x++){
+		for(Integer x = 0; x < pct; x++){
 			pb += "=";
 		}
-		while(pct < 10){
+		for(Integer x = pct; x < 10; x++){
 		 pb += " ";
-		 pct++;
 		}
 		pb += "| "+percent+"%\r";
 		return pb;
