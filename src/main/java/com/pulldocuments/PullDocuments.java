@@ -74,7 +74,7 @@ public class PullDocuments extends HttpServlet{
 							if(file.getFilename().indexOf(".xml") == -1){
 								// add files to map
 								count++;
-								System.out.print(progressBar((lstFiles.size()-1), count));
+								progressBar((lstFiles.size()-1), count);
 								//System.out.println("-- "+file.getFilename());
 								InputStream theFile = connector.sftpChannel.get(file.getFilename());
 								mapFiles.put(file.getFilename(), inputStreamToFile(theFile, file.getFilename(), ".pdf"));
@@ -157,7 +157,7 @@ public class PullDocuments extends HttpServlet{
         return tempFile;
     }
 	
-	private String progressBar(Integer total, Integer complete){
+	private void progressBar(Integer total, Integer complete){
 		Double percent = (double) ((complete/total)*100);
 		Integer pct = (int)Math.round(percent/10);
 		String pb = "|";
@@ -168,7 +168,7 @@ public class PullDocuments extends HttpServlet{
 		 pb += " ";
 		}
 		pb += "| "+percent+"%\r"; 
-		return pb;
+		System.out.println(pb);
 	}
 	
 	private String getBody(HttpServletRequest req) throws IOException{
