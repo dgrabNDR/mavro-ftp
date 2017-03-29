@@ -76,6 +76,7 @@ public class PullDocuments extends HttpServlet{
 								count++;
 								InputStream is = connector.sftpChannel.get(file.getFilename());
 								mapFiles.put(file.getFilename(), inputStreamToFile(is, file.getFilename(), ".pdf"));
+								System.out.println("added pdf file to map: "+mapFiles.get(file.getFilename()));
 							} else {
 								System.out.println("found xml file: "+file.getFilename());
 								InputStream is = connector.sftpChannel.get(file.getFilename());
@@ -84,7 +85,7 @@ public class PullDocuments extends HttpServlet{
 						}
 						System.out.println("pulled "+count+" pdf files");
 						if(xmlFile != null){
-							System.out.println("found xml file: "+xmlFile.getName());
+							System.out.println("set xml file: "+xmlFile.getName());
 							// parse xml file
 							// create salesforce records
 						}
