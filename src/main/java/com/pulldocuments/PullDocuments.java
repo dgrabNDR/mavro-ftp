@@ -55,8 +55,8 @@ public class PullDocuments extends HttpServlet{
 				System.out.println("opening folder: "+obj.getFilename());
 				connector.sftpChannel.cd("/E:/Opex/Mavro/"+obj.getFilename());
 				Vector<ChannelSftp.LsEntry> lstBatch = connector.sftpChannel.ls("*");
-				for(ChannelSftp.LsEntry obj : theList){
-					System.out.println(obj.getFilename());
+				for(ChannelSftp.LsEntry folder : lstBatch){
+					System.out.println(folder.getFilename());
 				}
 			}
 			// do the things
