@@ -45,6 +45,7 @@ public class PullDocuments extends HttpServlet{
 		try{
 			connector.connect();
 			connector.sftpChannel.pwd();
+			connector.sftpChannel.cd("/E:/Opex/Mavro");
 			System.out.println("pwd: "+connector.sftpChannel.pwd());
 			Vector list = connector.sftpChannel.ls("*");
 			Object[] theList = list.toArray();
