@@ -72,8 +72,7 @@ public class PullDocuments extends HttpServlet{
 						Integer count = 0;
 						for(ChannelSftp.LsEntry file : lstFiles){
 							if(file.getFilename().indexOf(".xml") == -1){
-								// add files to map
-								//System.out.println("-- "+file.getFilename());
+								System.out.println("found pdf file: "+file.getFilename());
 								count++;
 								InputStream is = connector.sftpChannel.get(file.getFilename());
 								mapFiles.put(file.getFilename(), inputStreamToFile(is, file.getFilename(), ".pdf"));
@@ -149,8 +148,8 @@ public class PullDocuments extends HttpServlet{
 	}
 	
 	public static File inputStreamToFile(InputStream in, String fileName, String ext) throws IOException {
-        fileName = fileName.indexOf(ext) > -1 ? fileName.substring(0, fileName.indexOf(ext)) : fileName;
-		final File tempFile = File.createTempFile(fileName, ext);
+        String fName = fileName.indexOf(ext) > -1 ? fileName.substring(0, fileName.indexOf(ext)) : fileName;
+		File tempFile = File.createTempFile(fName, ext);
         tempFile.deleteOnExit();
         try {
         	FileOutputStream out = new FileOutputStream(tempFile);
