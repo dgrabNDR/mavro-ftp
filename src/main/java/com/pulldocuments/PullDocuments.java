@@ -66,19 +66,20 @@ public class PullDocuments extends HttpServlet{
 						System.out.println("opening batch folder: "+batchFolder.getFilename());
 						connector.sftpChannel.cd("/E:/Opex/Mavro/"+dayFolder.getFilename()+"/"+batchFolder.getFilename());
 						Vector<ChannelSftp.LsEntry> lstFiles = connector.sftpChannel.ls("*");
-						System.out.println("pulling contents of batch folder: "+lstFiles.size()+" files...");
+						System.out.println("pulling contents of batch folder: "+(lstFiles.size()-1)+" files...");
 						// display contents of batch level directory
 						Integer count = 0;
 						File xmlFile = null;
 						for(ChannelSftp.LsEntry file : lstFiles){
 							if(file.getFilename().indexOf(".xml") == -1){
 								// add files to map
-								System.out.println(progressBar(lstFiles.size() -1, count++));
+								count++;
+								System.out.print(progressBar((lstFiles.size()-1), count));
 								//System.out.println("-- "+file.getFilename());
 								InputStream theFile = connector.sftpChannel.get(file.getFilename());
 								mapFiles.put(file.getFilename(), inputStreamToFile(theFile, file.getFilename(), ".pdf"));
 							} else {
-								xmlFile = inputStreamToFile(connector.sftpChannel.get(file.getFilename()), file.getFilename(), ".pdf");
+								xmlFile = inputStreamToFile(connector.sftpChannel.get(file.getFilename()), file.getFilename(), ".xml");
 							}
 						}
 						if(xmlFile != null){
@@ -146,7 +147,7 @@ public class PullDocuments extends HttpServlet{
 	}
 	
 	public static File inputStreamToFile(InputStream in, String fileName, String ext) throws IOException {
-        fileName = fileName.indexOf(".pdf") > -1 ? fileName.substring(0, fileName.indexOf(".pdf")) : fileName;
+        fileName = fileName.indexOf(ext) > -1 ? fileName.substring(0, fileName.indexOf(ext)) : fileName;
 		final File tempFile = File.createTempFile(fileName, ext);
         tempFile.deleteOnExit();
         try {
