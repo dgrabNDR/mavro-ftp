@@ -49,10 +49,15 @@ public class PullDocuments extends HttpServlet{
 
 			connector.sftpChannel.cd("/E:/Opex/Mavro");
 			System.out.println("pwd: "+connector.sftpChannel.pwd());
-			Vector<ChannelSftp.LsEntry> theList = connector.sftpChannel.ls("*");
+			Vector<ChannelSftp.LsEntry> topLevel = connector.sftpChannel.ls("*");
 			// display contents of directory
 			for(ChannelSftp.LsEntry obj : theList){
-				System.out.println(obj.getFilename());
+				System.out.println("opening folder: "+obj.getFilename());
+				connector.sftpChannel.cd("/E:/Opex/Mavro/"+obj.getFilename());
+				Vector<ChannelSftp.LsEntry> lstBatch = connector.sftpChannel.ls("*");
+				for(ChannelSftp.LsEntry obj : theList){
+					System.out.println(obj.getFilename());
+				}
 			}
 			// do the things
 			
