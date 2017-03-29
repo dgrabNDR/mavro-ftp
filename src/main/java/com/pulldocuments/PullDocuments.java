@@ -72,7 +72,7 @@ public class PullDocuments extends HttpServlet{
 						Integer count = 0;
 						for(ChannelSftp.LsEntry file : lstFiles){
 							if(file.getFilename().indexOf(".xml") == -1){
-								System.out.println("found pdf file: "+file.getFilename());
+								//System.out.println("found pdf file: "+file.getFilename());
 								count++;
 								InputStream is = connector.sftpChannel.get(file.getFilename());
 								mapFiles.put(file.getFilename(), inputStreamToFile(is, file.getFilename()));
