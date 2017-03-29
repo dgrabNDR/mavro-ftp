@@ -158,17 +158,20 @@ public class PullDocuments extends HttpServlet{
     }
 	
 	private void progressBar(Integer total, Integer complete){
+		System.out.print(complete+"/"+total);
 		Double percent = (double) ((complete/total)*100);
+		System.out.print(percent);
 		Integer pct = (int)Math.round(percent/10);
+		System.out.print(pct);
 		String pb = "|";
-		for(Integer x = 0; x < pct; x++){
+		for(Integer x = 1; x < pct; x++){
 			pb += "=";
 		}
 		for(Integer x = pct; x <= 10; x++){
 		 pb += " ";
 		}
 		pb += "| "+percent+"%\r"; 
-		System.out.println(pb);
+		System.out.print(pb);
 	}
 	
 	private String getBody(HttpServletRequest req) throws IOException{
