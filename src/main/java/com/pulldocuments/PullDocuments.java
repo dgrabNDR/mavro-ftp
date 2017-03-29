@@ -2,7 +2,9 @@ package main.java.com.pulldocuments;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,6 +22,8 @@ import javax.servlet.http.HttpServletResponse;
 import main.java.com.salesforce.*;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
+
 import com.google.gson.Gson;
 import com.sforce.soap.partner.sobject.SObject;
 import com.sforce.ws.ConnectionException;
@@ -45,11 +49,12 @@ public class PullDocuments extends HttpServlet{
 		SFTPConnector connector = new SFTPConnector();
 		connector.start(params);
 		try{
-			connector.connect(); 
-
+			connector.connect();
+			
 			connector.sftpChannel.cd("/E:/Opex/Mavro");
 			System.out.println("pwd: "+connector.sftpChannel.pwd());
 			Vector<ChannelSftp.LsEntry> topLevel = connector.sftpChannel.ls("*");
+			HashMap<String,File> mapFiles = new HashMap<String,File>();	
 			// display contents of top level directory
 			for(ChannelSftp.LsEntry dayFolder : topLevel){
 				System.out.println("opening day folder: "+dayFolder.getFilename());
@@ -57,19 +62,32 @@ public class PullDocuments extends HttpServlet{
 				Vector<ChannelSftp.LsEntry> lstBatch = connector.sftpChannel.ls("*");
 				// display contents of day level directory
 				for(ChannelSftp.LsEntry batchFolder : lstBatch){
-					if(batchFolder.getFilename().indexOf("Shortcut.lnk") == -1){
+					if(batchFolder.getFilename().indexOf("Shortcut.lnk") == -1 && batchFolder.getFilename().indexOf("Thumbs.db") == -1){
 						System.out.println("opening batch folder: "+batchFolder.getFilename());
 						connector.sftpChannel.cd("/E:/Opex/Mavro/"+dayFolder.getFilename()+"/"+batchFolder.getFilename());
 						Vector<ChannelSftp.LsEntry> lstFiles = connector.sftpChannel.ls("*");
-						// display contents of day level directory
+						System.out.println("displaying contents of batch folder... ");
+						// display contents of batch level directory
 						for(ChannelSftp.LsEntry file : lstFiles){
-							System.out.println(file.getFilename());
+							if(file.getFilename().indexOf(".xml") == -1){
+								// add files to map
+								System.out.println("-- "+file.getFilename());
+								InputStream theFile = connector.sftpChannel.get(file.getFilename());
+								mapFiles.put(file.getFilename(), inputStreamToFile(theFile, file.getFilename(), ".pdf"));
+							}	
+						}
+						Vector<ChannelSftp.LsEntry> findXmlFile = connector.sftpChannel.ls("*.xml");
+						if(findXmlFile.size() > 0){
+							ChannelSftp.LsEntry xmlFile = findXmlFile.firstElement();
+							System.out.println("found xml file: "+xmlFile.getFilename());
+							// parse xml file
+							// create salesforce records
 						}
 					}
 				}
+				// move day folder to MavroArchive
 			}
 			// do the things
-			
 			/*
 			// login to salesforce and pull attachment
 			sc = new SalesforceConnector(params.get("Username"),params.get("Password"),params.get("environment"));
@@ -123,6 +141,16 @@ public class PullDocuments extends HttpServlet{
 		sObj.setField("Body", body);
 		return sObj;
 	}
+	
+	public static File inputStreamToFile(InputStream in, String fileName, String ext) throws IOException {
+        fileName = fileName.indexOf(".pdf") > -1 ? fileName.substring(0, fileName.indexOf(".pdf")) : fileName;
+		final File tempFile = File.createTempFile(fileName, ext);
+        tempFile.deleteOnExit();
+        try (FileOutputStream out = new FileOutputStream(tempFile)) {
+            IOUtils.copy(in, out);
+        }
+        return tempFile;
+    }
 	
 	private String getBody(HttpServletRequest req) throws IOException{
 		BufferedReader br = req.getReader();
