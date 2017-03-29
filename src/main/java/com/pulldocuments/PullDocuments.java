@@ -66,14 +66,17 @@ public class PullDocuments extends HttpServlet{
 						System.out.println("opening batch folder: "+batchFolder.getFilename());
 						connector.sftpChannel.cd("/E:/Opex/Mavro/"+dayFolder.getFilename()+"/"+batchFolder.getFilename());
 						Vector<ChannelSftp.LsEntry> lstFiles = connector.sftpChannel.ls("*");
-						System.out.println("displaying contents of batch folder... ");
+						System.out.println("pulling contents of batch folder: "+lstFiles.size()+" files...");
 						// display contents of batch level directory
+						Integer count = 0;
 						for(ChannelSftp.LsEntry file : lstFiles){
 							if(file.getFilename().indexOf(".xml") == -1){
 								// add files to map
-								System.out.println("-- "+file.getFilename());
+								System.out.print(progressBar(lstFiles.size() -1, count++));
+								//System.out.println("-- "+file.getFilename());
 								InputStream theFile = connector.sftpChannel.get(file.getFilename());
 								mapFiles.put(file.getFilename(), inputStreamToFile(theFile, file.getFilename(), ".pdf"));
+								
 							}	
 						}
 						Vector<ChannelSftp.LsEntry> findXmlFile = connector.sftpChannel.ls("*.xml");
@@ -152,6 +155,21 @@ public class PullDocuments extends HttpServlet{
         } catch (IOException e){} finally {}
         return tempFile;
     }
+	
+	private String progressBar(Integer total, Integer complete){
+		Double percent = (double) ((complete/total)*100);
+		Double pct = percent/10;
+		String pb = "|";
+		for(Integer x = 0; x < percent/10; x++){
+			pb += "=";
+		}
+		while(pct < 10){
+		 pb += " ";
+		 pct++;
+		}
+		pb += "| "+percent+"%\r";
+		return pb;
+	}
 	
 	private String getBody(HttpServletRequest req) throws IOException{
 		BufferedReader br = req.getReader();
