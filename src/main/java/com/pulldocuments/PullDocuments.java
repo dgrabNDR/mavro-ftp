@@ -75,12 +75,12 @@ public class PullDocuments extends HttpServlet{
 								System.out.println("found pdf file: "+file.getFilename());
 								count++;
 								InputStream is = connector.sftpChannel.get(file.getFilename());
-								mapFiles.put(file.getFilename(), inputStreamToFile(is, file.getFilename(), ".pdf"));
+								mapFiles.put(file.getFilename(), inputStreamToFile(is, file.getFilename()));
 								System.out.println("added pdf file to map: "+mapFiles.get(file.getFilename()));
 							} else {
 								System.out.println("found xml file: "+file.getFilename());
 								InputStream is = connector.sftpChannel.get(file.getFilename());
-								xmlFile = inputStreamToFile(is, file.getFilename(), ".xml");
+								xmlFile = inputStreamToFile(is, file.getFilename());
 							}
 						}
 						System.out.println("pulled "+count+" pdf files");
@@ -148,9 +148,8 @@ public class PullDocuments extends HttpServlet{
 		return sObj;
 	}
 	
-	public static File inputStreamToFile(InputStream in, String fileName, String ext) throws IOException {
-        String fName = fileName.indexOf(ext) > -1 ? fileName.substring(0, fileName.indexOf(ext)) : fileName;
-		File tempFile = File.createTempFile(fName, ext);
+	public static File inputStreamToFile(InputStream in, String fileName) throws IOException {
+		File tempFile = new File(fileName);
         tempFile.deleteOnExit();
         try {
         	FileOutputStream out = new FileOutputStream(tempFile);
