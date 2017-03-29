@@ -52,12 +52,20 @@ public class PullDocuments extends HttpServlet{
 			Vector<ChannelSftp.LsEntry> topLevel = connector.sftpChannel.ls("*");
 			// display contents of top level directory
 			for(ChannelSftp.LsEntry dayFolder : topLevel){
-				System.out.println("opening folder: "+dayFolder.getFilename());
+				System.out.println("opening day folder: "+dayFolder.getFilename());
 				connector.sftpChannel.cd("/E:/Opex/Mavro/"+dayFolder.getFilename());
 				Vector<ChannelSftp.LsEntry> lstBatch = connector.sftpChannel.ls("*");
 				// display contents of day level directory
-				for(ChannelSftp.LsEntry folder : lstBatch){
-					System.out.println(folder.getFilename());
+				for(ChannelSftp.LsEntry batchFolder : lstBatch){
+					if(batchFolder.getFilename().indexOf("Shortcut.lnk") == -1){
+						System.out.println("opening batch folder: "+batchFolder.getFilename());
+						connector.sftpChannel.cd("/E:/Opex/Mavro/"+dayFolder.getFilename()+"/"+batchFolder.getFilename());
+						Vector<ChannelSftp.LsEntry> lstFiles = connector.sftpChannel.ls("*");
+						// display contents of day level directory
+						for(ChannelSftp.LsEntry file : lstFiles){
+							System.out.println(file.getFilename());
+						}
+					}
 				}
 			}
 			// do the things
