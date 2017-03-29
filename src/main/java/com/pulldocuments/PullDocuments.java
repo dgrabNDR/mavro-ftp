@@ -68,13 +68,10 @@ public class PullDocuments extends HttpServlet{
 						Vector<ChannelSftp.LsEntry> lstFiles = connector.sftpChannel.ls("*");
 						System.out.println("pulling contents of batch folder: "+(lstFiles.size()-1)+" files...");
 						// display contents of batch level directory
-						Integer count = 0;
 						File xmlFile = null;
 						for(ChannelSftp.LsEntry file : lstFiles){
 							if(file.getFilename().indexOf(".xml") == -1){
 								// add files to map
-								count++;
-								progressBar((lstFiles.size()-1), count);
 								//System.out.println("-- "+file.getFilename());
 								InputStream theFile = connector.sftpChannel.get(file.getFilename());
 								mapFiles.put(file.getFilename(), inputStreamToFile(theFile, file.getFilename(), ".pdf"));
@@ -156,23 +153,6 @@ public class PullDocuments extends HttpServlet{
         } catch (IOException e){} finally {}
         return tempFile;
     }
-	
-	private void progressBar(Integer total, Integer complete){
-		System.out.print(complete+"/"+total);
-		Double percent = (double) ((complete/total)*100);
-		System.out.print(percent);
-		Integer pct = (int)Math.round(percent/10);
-		System.out.print(pct);
-		String pb = "|";
-		for(Integer x = 1; x < pct; x++){
-			pb += "=";
-		}
-		for(Integer x = pct; x <= 10; x++){
-		 pb += " ";
-		}
-		pb += "| "+percent+"%\r"; 
-		System.out.print(pb);
-	}
 	
 	private String getBody(HttpServletRequest req) throws IOException{
 		BufferedReader br = req.getReader();
