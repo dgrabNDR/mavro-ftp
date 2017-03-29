@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
+import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.SftpException;
 import com.jcraft.jsch.ChannelSftp.LsEntry;
 
@@ -44,7 +45,7 @@ public class PullDocuments extends HttpServlet{
 		SFTPConnector connector = new SFTPConnector();
 		connector.start(params);
 		try{
-			connector.connect();
+			connector.connect(); 
 
 			connector.sftpChannel.cd("/E:/Opex/Mavro");
 			System.out.println("pwd: "+connector.sftpChannel.pwd());
