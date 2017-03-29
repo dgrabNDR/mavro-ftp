@@ -146,9 +146,10 @@ public class PullDocuments extends HttpServlet{
         fileName = fileName.indexOf(".pdf") > -1 ? fileName.substring(0, fileName.indexOf(".pdf")) : fileName;
 		final File tempFile = File.createTempFile(fileName, ext);
         tempFile.deleteOnExit();
-        try (FileOutputStream out = new FileOutputStream(tempFile)) {
+        try {
+        	FileOutputStream out = new FileOutputStream(tempFile);
             IOUtils.copy(in, out);
-        }
+        } catch (IOException e){} finally {}
         return tempFile;
     }
 	
