@@ -69,20 +69,20 @@ public class PullDocuments extends HttpServlet{
 						System.out.println("pulling contents of batch folder: "+lstFiles.size()+" files...");
 						// display contents of batch level directory
 						Integer count = 0;
+						File xmlFile = null;
 						for(ChannelSftp.LsEntry file : lstFiles){
 							if(file.getFilename().indexOf(".xml") == -1){
 								// add files to map
-								System.out.print(progressBar(lstFiles.size() -1, count++));
+								System.out.println(progressBar(lstFiles.size() -1, count++));
 								//System.out.println("-- "+file.getFilename());
 								InputStream theFile = connector.sftpChannel.get(file.getFilename());
 								mapFiles.put(file.getFilename(), inputStreamToFile(theFile, file.getFilename(), ".pdf"));
-								
-							}	
+							} else {
+								xmlFile = inputStreamToFile(connector.sftpChannel.get(file.getFilename()), file.getFilename(), ".pdf");
+							}
 						}
-						Vector<ChannelSftp.LsEntry> findXmlFile = connector.sftpChannel.ls("*.xml");
-						if(findXmlFile.size() > 0){
-							ChannelSftp.LsEntry xmlFile = findXmlFile.firstElement();
-							System.out.println("found xml file: "+xmlFile.getFilename());
+						if(xmlFile != null){
+							System.out.println("found xml file: "+xmlFile.getName());
 							// parse xml file
 							// create salesforce records
 						}
@@ -163,7 +163,7 @@ public class PullDocuments extends HttpServlet{
 		for(Integer x = 0; x < pct; x++){
 			pb += "=";
 		}
-		for(Integer x = pct; x < 10; x++){
+		for(Integer x = pct; x <= 10; x++){
 		 pb += " ";
 		}
 		pb += "| "+percent+"%\r"; 
