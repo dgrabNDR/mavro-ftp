@@ -50,11 +50,12 @@ public class PullDocuments extends HttpServlet{
 			connector.sftpChannel.cd("/E:/Opex/Mavro");
 			System.out.println("pwd: "+connector.sftpChannel.pwd());
 			Vector<ChannelSftp.LsEntry> topLevel = connector.sftpChannel.ls("*");
-			// display contents of directory
-			for(ChannelSftp.LsEntry obj : theList){
-				System.out.println("opening folder: "+obj.getFilename());
-				connector.sftpChannel.cd("/E:/Opex/Mavro/"+obj.getFilename());
+			// display contents of top level directory
+			for(ChannelSftp.LsEntry dayFolder : topLevel){
+				System.out.println("opening folder: "+dayFolder.getFilename());
+				connector.sftpChannel.cd("/E:/Opex/Mavro/"+dayFolder.getFilename());
 				Vector<ChannelSftp.LsEntry> lstBatch = connector.sftpChannel.ls("*");
+				// display contents of day level directory
 				for(ChannelSftp.LsEntry folder : lstBatch){
 					System.out.println(folder.getFilename());
 				}
