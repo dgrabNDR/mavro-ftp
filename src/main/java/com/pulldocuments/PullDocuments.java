@@ -166,7 +166,7 @@ public class PullDocuments extends HttpServlet{
 		for(Integer x = pct; x < 10; x++){
 		 pb += " ";
 		}
-		pb += "| "+percent+"%\r";
+		pb += "| "+percent+"%\r"; 
 		return pb;
 	}
 	
