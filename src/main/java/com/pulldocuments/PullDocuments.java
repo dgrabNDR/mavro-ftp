@@ -66,19 +66,22 @@ public class PullDocuments extends HttpServlet{
 						System.out.println("opening batch folder: "+batchFolder.getFilename());
 						connector.sftpChannel.cd("/E:/Opex/Mavro/"+dayFolder.getFilename()+"/"+batchFolder.getFilename());
 						Vector<ChannelSftp.LsEntry> lstFiles = connector.sftpChannel.ls("*");
-						System.out.println("pulling contents of batch folder: "+(lstFiles.size()-1)+" files...");
+						System.out.println("pulling contents of batch folder...");
 						// display contents of batch level directory
 						File xmlFile = null;
+						Integer count = 0;
 						for(ChannelSftp.LsEntry file : lstFiles){
 							if(file.getFilename().indexOf(".xml") == -1){
 								// add files to map
 								//System.out.println("-- "+file.getFilename());
+								count++;
 								InputStream theFile = connector.sftpChannel.get(file.getFilename());
 								mapFiles.put(file.getFilename(), inputStreamToFile(theFile, file.getFilename(), ".pdf"));
 							} else {
 								xmlFile = inputStreamToFile(connector.sftpChannel.get(file.getFilename()), file.getFilename(), ".xml");
 							}
 						}
+						System.out.println("pulled "+count+" pdf files");
 						if(xmlFile != null){
 							System.out.println("found xml file: "+xmlFile.getName());
 							// parse xml file
