@@ -75,10 +75,12 @@ public class PullDocuments extends HttpServlet{
 								// add files to map
 								//System.out.println("-- "+file.getFilename());
 								count++;
-								InputStream theFile = connector.sftpChannel.get(file.getFilename());
-								mapFiles.put(file.getFilename(), inputStreamToFile(theFile, file.getFilename(), ".pdf"));
+								InputStream is = connector.sftpChannel.get(file.getFilename());
+								mapFiles.put(file.getFilename(), inputStreamToFile(is, file.getFilename(), ".pdf"));
 							} else {
-								xmlFile = inputStreamToFile(connector.sftpChannel.get(file.getFilename()), file.getFilename(), ".xml");
+								System.out.println("found xml file: "+file.getFilename());
+								InputStream is = connector.sftpChannel.get(file.getFilename());
+								xmlFile = inputStreamToFile(is, file.getFilename(), ".xml");
 							}
 						}
 						System.out.println("pulled "+count+" pdf files");
