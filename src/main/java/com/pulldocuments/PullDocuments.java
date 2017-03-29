@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Vector;
 
 import com.jcraft.jsch.SftpException;
+import com.jcraft.jsch.ChannelSftp.LsEntry;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -44,13 +45,13 @@ public class PullDocuments extends HttpServlet{
 		connector.start(params);
 		try{
 			connector.connect();
-			connector.sftpChannel.pwd();
+
+			connector.sftpChannel.cd("/E:/Opex/Mavro");
 			System.out.println("pwd: "+connector.sftpChannel.pwd());
-			Vector list = connector.sftpChannel.ls("*");
-			Object[] theList = list.toArray();
+			Vector<ChannelSftp.LsEntry> theList = connector.sftpChannel.ls("*");
 			// display contents of directory
-			for(Object obj : theList){
-				System.out.println(obj);
+			for(ChannelSftp.LsEntry obj : theList){
+				System.out.println(obj.getFilename());
 			}
 			// do the things
 			
