@@ -109,8 +109,8 @@ public class PullDocuments extends HttpServlet{
 				// move day folder to MavroArchive
 				Path src = new File("/E:/Opex/Mavro/"+dayFolder.getFilename()).toPath();
 				Path dest = new File("/E:/Opex/MavroArchive/"+dayFolder.getFilename()).toPath();
-				System.out.println("moving files to archive...");
-				Files.move(src,dest);
+				//System.out.println("moving files to archive...");
+				//Files.move(src,dest);
 			}
 			
 			System.out.println("adding salesforce attachment...");
