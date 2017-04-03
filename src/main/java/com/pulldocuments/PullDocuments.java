@@ -75,7 +75,9 @@ public class PullDocuments extends HttpServlet{
 				connector.sftpChannel.cd("/E:/Opex/Mavro/"+dayFolder.getFilename());
 				Vector<ChannelSftp.LsEntry> lstBatch = connector.sftpChannel.ls("*");
 				// display contents of day level directory
+				Integer count = 0;
 				for(ChannelSftp.LsEntry batchFolder : lstBatch){
+					if(count == 0){
 					if(batchFolder.getFilename().indexOf("Shortcut.lnk") == -1 && batchFolder.getFilename().indexOf("Thumbs.db") == -1){
 						System.out.println("opening batch folder: "+batchFolder.getFilename());
 						connector.sftpChannel.cd("/E:/Opex/Mavro/"+dayFolder.getFilename()+"/"+batchFolder.getFilename());
@@ -83,11 +85,9 @@ public class PullDocuments extends HttpServlet{
 						System.out.println("pulling contents of batch folder...");
 						// display contents of batch level directory
 						File xmlFile = null;
-						Integer count = 0;
 						for(ChannelSftp.LsEntry file : lstFiles){
 							if(file.getFilename().indexOf(".xml") == -1){
-								//System.out.println("found pdf file: "+file.getFilename());
-								count++;
+								System.out.println("found pdf file: "+file.getFilename());
 								InputStream is = connector.sftpChannel.get(file.getFilename());
 								mapFiles.put(file.getFilename(), inputStreamToFile(is, file.getFilename()));
 
@@ -103,15 +103,19 @@ public class PullDocuments extends HttpServlet{
 							lstSObj.addAll(xmlToSObj(xmlFile));
 						}
 					}
+					count++;
+					}
 				}
 				// move day folder to MavroArchive
 				Path src = new File("/E:/Opex/Mavro/"+dayFolder.getFilename()).toPath();
 				Path dest = new File("/E:/Opex/MavroArchive/"+dayFolder.getFilename()).toPath();
+				System.out.println("moving files to archive...");
 				Files.move(src,dest);
 			}
 			
 			System.out.println("adding salesforce attachment...");
 			try {
+				System.out.println("connecting to salesforce...");
 				sc = new SalesforceConnector(params.get("Username"),params.get("Password"),params.get("environment"));
 				ArrayList<SObject>  newLst = new ArrayList<SObject>();
 				newLst.add(lstSObj.get(0));
@@ -176,7 +180,7 @@ public class PullDocuments extends HttpServlet{
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 		Document doc = dBuilder.parse(xml);
 		doc.getDocumentElement().normalize();
-		System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
+		//System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
 		NodeList nList = doc.getElementsByTagName("Transaction");
 		for (int temp = 0; temp < nList.getLength(); temp++) {
 			Node nNode = nList.item(temp);
