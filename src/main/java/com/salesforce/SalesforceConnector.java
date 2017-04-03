@@ -115,7 +115,7 @@ public class SalesforceConnector {
 			System.out.println("Updating : "+sobjArr.length);
 			try{
 				results.addAll(Arrays.asList(partnerConnection.create(sobjArr)));
-			} catch (ConnectionException e){
+			} catch (Exception e){
 				e.printStackTrace();
 			}
 		}
