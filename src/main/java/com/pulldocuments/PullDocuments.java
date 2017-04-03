@@ -18,11 +18,19 @@ import com.jcraft.jsch.ChannelSftp.LsEntry;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import main.java.com.salesforce.*;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import com.google.gson.Gson;
 import com.sforce.soap.partner.sobject.SObject;
@@ -31,6 +39,7 @@ import com.sforce.ws.ConnectionException;
 public class PullDocuments extends HttpServlet{
 	private SalesforceConnector sc;
 	Map<String,String> params = new HashMap<String,String>();
+	HashMap<String,File> mapFiles = new HashMap<String,File>();	
 	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws  IOException {
@@ -54,7 +63,7 @@ public class PullDocuments extends HttpServlet{
 			connector.sftpChannel.cd("/E:/Opex/Mavro");
 			System.out.println("pwd: "+connector.sftpChannel.pwd());
 			Vector<ChannelSftp.LsEntry> topLevel = connector.sftpChannel.ls("*");
-			HashMap<String,File> mapFiles = new HashMap<String,File>();	
+			
 			// display contents of top level directory
 			for(ChannelSftp.LsEntry dayFolder : topLevel){
 				System.out.println("opening day folder: "+dayFolder.getFilename());
@@ -86,6 +95,7 @@ public class PullDocuments extends HttpServlet{
 						System.out.println("pulled "+count+" pdf files");
 						if(xmlFile != null){
 							System.out.println("parsing xmlFile... ");
+							xmlToSObj(xmlFile);
 							// parse xml file
 							// create salesforce records
 						}
@@ -129,8 +139,46 @@ public class PullDocuments extends HttpServlet{
 			connector.disconnect();
 		} catch (SftpException e){
 			
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SAXException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} finally {}
 		
+	}
+	
+	private SObject xmlToSObj(File xml) throws ParserConfigurationException, SAXException, IOException{
+		SObject sObj = new SObject("Attachment__c");
+		
+		
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+		Document doc = dBuilder.parse(xml);
+		doc.getDocumentElement().normalize();
+		System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
+		NodeList nList = doc.getElementsByTagName("Transaction");
+		for (int temp = 0; temp < nList.getLength(); temp++) {
+			Node nNode = nList.item(temp);
+			System.out.println("Current Element :" + nNode.getNodeName());
+			if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+				Element eElement = (Element) nNode;
+				System.out.println("TransactionID: " + eElement.getAttribute("TransactionID"));
+				System.out.println("ImageFile: " + eElement.getAttribute("ImageFile"));
+				
+				
+				/*sObj.setField("Name", scan.getName());
+				byte[] body = null;
+				try {
+					body = Files.readAllBytes(scan.toPath());
+					sObj.setField("Body", body);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}*/
+			}
+		}	
+		return sObj;
 	}
 	
 	private SObject fileToSObj(String pId, String fileName, File theFile){
