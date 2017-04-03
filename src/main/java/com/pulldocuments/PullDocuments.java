@@ -203,7 +203,7 @@ public class PullDocuments extends HttpServlet{
 				}*/
 				sObj.setField("Name", imgId);
 				sObj.setField("Mavro_OriginalCreditorName__c", eElement.getAttribute("OriginalCreditorName"));	
-				sObj.setField("Mavro_CurrentCreditorName__c", eElement.getAttribute("CurrentCreditorName"));
+				/*sObj.setField("Mavro_CurrentCreditorName__c", eElement.getAttribute("CurrentCreditorName"));
 				sObj.setField("Mavro_CollectionAgency__c", eElement.getAttribute("CollectionAgency"));
 				sObj.setField("Mavro_DocumentType__c", eElement.getAttribute("DocumentType"));
 				sObj.setField("Mavro_CustomerName__c", eElement.getAttribute("CustomerName"));
@@ -211,7 +211,7 @@ public class PullDocuments extends HttpServlet{
 				sObj.setField("Mavro_AccountBalance__c", eElement.getAttribute("AccountBalance"));
 				sObj.setField("Mavro_NewCharges__c", eElement.getAttribute("NewCharges"));
 				sObj.setField("Mavro_Offer__c", eElement.getAttribute("Offer"));
-				//System.out.println(sObj);
+				*///System.out.println(sObj);
 				lstSO.add(sObj);
 			}
 		}	
