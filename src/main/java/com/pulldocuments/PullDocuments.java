@@ -57,6 +57,7 @@ public class PullDocuments extends HttpServlet{
 		// upload files to ida ftp		
 		SFTPConnector connector = new SFTPConnector();
 		connector.start(params);
+		ArrayList<SObject> lstSObj = new ArrayList<SObject>();
 		try{
 			connector.connect();
 			
@@ -95,7 +96,7 @@ public class PullDocuments extends HttpServlet{
 						System.out.println("pulled "+count+" pdf files");
 						if(xmlFile != null){
 							System.out.println("parsing xmlFile... ");
-							xmlToSObj(xmlFile);
+							lstSObj.addAll(xmlToSObj(xmlFile));
 							// parse xml file
 							// create salesforce records
 						}
@@ -149,9 +150,8 @@ public class PullDocuments extends HttpServlet{
 		
 	}
 	
-	private SObject xmlToSObj(File xml) throws ParserConfigurationException, SAXException, IOException{
-		SObject sObj = new SObject("Attachment__c");
-		
+	private ArrayList<SObject> xmlToSObj(File xml) throws ParserConfigurationException, SAXException, IOException{
+		ArrayList<SObject> lstSO = new ArrayList<SObject>();
 		
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -161,24 +161,37 @@ public class PullDocuments extends HttpServlet{
 		NodeList nList = doc.getElementsByTagName("Transaction");
 		for (int temp = 0; temp < nList.getLength(); temp++) {
 			Node nNode = nList.item(temp);
-			System.out.println("Current Element :" + nNode.getNodeName());
+			//System.out.println("Current Element :" + nNode.getNodeName());
 			if (nNode.getNodeType() == Node.ELEMENT_NODE) {
 				Element eElement = (Element) nNode;
-				System.out.println("TransactionID: " + eElement.getAttribute("TransactionID"));
-				System.out.println("ImageFile: " + eElement.getAttribute("ImageFile"));
-				
-				
-				/*sObj.setField("Name", scan.getName());
-				byte[] body = null;
-				try {
-					body = Files.readAllBytes(scan.toPath());
-					sObj.setField("Body", body);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}*/
+				String imgId =  eElement.getAttribute("ImageFile");
+				SObject sObj = new SObject("Attachment__c");	
+				if(mapFiles.containsKey(imgId)){
+					System.out.println("Found ImageFile: "+imgId); 
+					File scan = mapFiles.get(imgId);
+					byte[] body = null;
+					try {
+						body = Files.readAllBytes(scan.toPath());
+						sObj.setField("Name", scan.getName());
+						sObj.setField("Body", body);						
+					} catch (IOException e) {
+						e.printStackTrace();
+					}							
+				}
+				sObj.setField("Mavro_OriginalCreditorName__c", eElement.getAttribute("OriginalCreditorName"));	
+				sObj.setField("Mavro_CurrentCreditorName__c", eElement.getAttribute("CurrentCreditorName"));
+				sObj.setField("Mavro_CollectionAgency__c", eElement.getAttribute("CollectionAgency"));
+				sObj.setField("Mavro_DocumentType__c", eElement.getAttribute("DocumentType"));
+				sObj.setField("Mavro_CustomerName__c", eElement.getAttribute("CustomerName"));
+				sObj.setField("Mavro_AccountNumber__c", eElement.getAttribute("AccountNumber"));
+				sObj.setField("Mavro_AccountBalance__c", eElement.getAttribute("AccountBalance"));
+				sObj.setField("Mavro_NewCharges__c", eElement.getAttribute("NewCharges"));
+				sObj.setField("Mavro_Offer__c", eElement.getAttribute("Offer"));
+				System.out.println(sObj);
+				lstSO.add(sObj);
 			}
 		}	
-		return sObj;
+		return lstSO;
 	}
 	
 	private SObject fileToSObj(String pId, String fileName, File theFile){
