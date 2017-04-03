@@ -114,7 +114,7 @@ public class SalesforceConnector {
 			SObject[] sobjArr = chunk.toArray(new SObject[chunk.size()]);
 			System.out.println("Updating : "+sobjArr.length);
 			try{
-				results.addAll(partnerConnection.create(sobjArr));
+				results.addAll(Arrays.asList(partnerConnection.create(sobjArr)));
 			} catch (ConnectionException e){
 				e.printStackTrace();
 			}
