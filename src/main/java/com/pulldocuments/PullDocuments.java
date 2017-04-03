@@ -6,6 +6,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,6 +36,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import com.google.gson.Gson;
+import com.sforce.soap.partner.SaveResult;
 import com.sforce.soap.partner.sobject.SObject;
 import com.sforce.ws.ConnectionException;
 
@@ -97,13 +101,28 @@ public class PullDocuments extends HttpServlet{
 						if(xmlFile != null){
 							System.out.println("parsing xmlFile... ");
 							lstSObj.addAll(xmlToSObj(xmlFile));
-							// parse xml file
-							// create salesforce records
 						}
 					}
 				}
 				// move day folder to MavroArchive
+				Path src = new File("/E:/Opex/Mavro/"+dayFolder.getFilename()).toPath();
+				Path dest = new File("/E:/Opex/MavroArchive/"+dayFolder.getFilename()).toPath();
+				Files.move(src,dest);
 			}
+			
+			System.out.println("adding salesforce attachment...");
+			try {
+				sc = new SalesforceConnector(params.get("Username"),params.get("Password"),params.get("environment"));
+				ArrayList<SObject>  newLst = new ArrayList<SObject>();
+				newLst.add(lstSObj.get(0));
+				ArrayList<SaveResult> srLst = sc.create(newLst);
+				for(SaveResult sr : srLst){
+					System.out.println("sr: "+sr.getId());
+				}
+			} catch (ConnectionException e) {
+				e.printStackTrace();
+			}
+			
 			// do the things
 			/*
 			// login to salesforce and pull attachment
@@ -166,7 +185,7 @@ public class PullDocuments extends HttpServlet{
 				Element eElement = (Element) nNode;
 				String imgId =  eElement.getAttribute("ImageFile");
 				SObject sObj = new SObject("Attachment__c");	
-				if(mapFiles.containsKey(imgId)){
+				/*if(mapFiles.containsKey(imgId)){
 					System.out.println("Found ImageFile: "+imgId); 
 					File scan = mapFiles.get(imgId);
 					byte[] body = null;
@@ -177,7 +196,8 @@ public class PullDocuments extends HttpServlet{
 					} catch (IOException e) {
 						e.printStackTrace();
 					}							
-				}
+				}*/
+				sObj.setField("Name", imgId);
 				sObj.setField("Mavro_OriginalCreditorName__c", eElement.getAttribute("OriginalCreditorName"));	
 				sObj.setField("Mavro_CurrentCreditorName__c", eElement.getAttribute("CurrentCreditorName"));
 				sObj.setField("Mavro_CollectionAgency__c", eElement.getAttribute("CollectionAgency"));
@@ -194,21 +214,6 @@ public class PullDocuments extends HttpServlet{
 		return lstSO;
 	}
 	
-	private SObject fileToSObj(String pId, String fileName, File theFile){
-		SObject sObj = new SObject("Attachment");
-		sObj.setField("ParentId", pId);
-		sObj.setField("Name", fileName);
-		byte[] body = null;
-		try {
-			body = Files.readAllBytes(theFile.toPath());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		sObj.setField("Body", body);
-		return sObj;
-	}
-	
 	public static File inputStreamToFile(InputStream in, String fileName) throws IOException {
 		File tempFile = new File(fileName);
         tempFile.deleteOnExit();
@@ -221,7 +226,7 @@ public class PullDocuments extends HttpServlet{
 	
 	private String getBody(HttpServletRequest req) throws IOException{
 		BufferedReader br = req.getReader();
-		StringBuilder sb = new StringBuilder();  
+		StringBuilder sb = new StringBuilder();   
 		String str;
 		while( (str = br.readLine()) != null ){
 	        sb.append(str);
