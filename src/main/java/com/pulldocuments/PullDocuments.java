@@ -87,12 +87,12 @@ public class PullDocuments extends HttpServlet{
 						File xmlFile = null;
 						for(ChannelSftp.LsEntry file : lstFiles){
 							if(file.getFilename().indexOf(".xml") == -1){
-								System.out.println("found pdf file: "+file.getFilename());
+								//System.out.println("found pdf file: "+file.getFilename());
 								InputStream is = connector.sftpChannel.get(file.getFilename());
 								mapFiles.put(file.getFilename(), inputStreamToFile(is, file.getFilename()));
 
 							} else {
-								System.out.println("found xml file: "+file.getFilename());
+								//System.out.println("found xml file: "+file.getFilename());
 								InputStream is = connector.sftpChannel.get(file.getFilename());
 								xmlFile = inputStreamToFile(is, file.getFilename());
 							}
@@ -113,54 +113,53 @@ public class PullDocuments extends HttpServlet{
 				//Files.move(src,dest);
 			}
 			
-			System.out.println("adding salesforce attachment...");
+			System.out.println("inserting new attachment__c records...");
+			ArrayList<String> idLst = new ArrayList<String>();
 			try {
 				System.out.println("connecting to salesforce...");
 				sc = new SalesforceConnector(params.get("Username"),params.get("Password"),params.get("environment"));
 				sc.login();
 				ArrayList<SObject>  newLst = new ArrayList<SObject>();
 				newLst.add(lstSObj.get(0));
-				System.out.println(lstSObj.get(0));
-				ArrayList<SaveResult> srLst = sc.create(newLst);
+				newLst.add(lstSObj.get(1));
+				
+				ArrayList<SaveResult> srLst = sc.create(newLst);				
 				for(SaveResult sr : srLst){
-					System.out.println("sr: "+sr);
+					idLst.add(sr.getId());
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			
-			// do the things
-			/*
-			// login to salesforce and pull attachment
+			// query new attachments
 			sc = new SalesforceConnector(params.get("Username"),params.get("Password"),params.get("environment"));
-			ArrayList<SObject> attachments = new ArrayList<SObject>();		
+			ArrayList<SObject> attachments = new ArrayList<SObject>();	
+			ArrayList<SObject> insertFiles = new ArrayList<SObject>();	
 			try {	
-				System.out.println("logging into salesforce...");
-				sc.login();
-				attachments = query(params.get("attId"));
-				System.out.println("queried "+attachments.size()+" attachments");	
+				attachments = query(idLst);
+				System.out.println("queried "+attachments.size()+" attachments");
+				for(SObject so : attachments){					
+					File theFile = mapFiles.get((String)so.getField("Name"));
+					byte[] body = null;
+					
+					body = Files.readAllBytes(theFile.toPath());					
+					SObject sObj = new SObject("Attachment");
+					sObj.setField("ParentId", (String)so.getField("Id"));
+					sObj.setField("Name", (String)so.getField("Name"));					
+					sObj.setField("Body", body);
+					insertFiles.add(sObj);
+				}
 			} catch (ConnectionException e1) {
 				e1.printStackTrace();
 			}
 			
-			// create new SF attachment objects
-			ArrayList<SObject> lstSObj = new ArrayList<SObject>();
-			for(SObject so : attachments){			
-				try {						
-					lstSObj.add(fileToSObj((String)so.getField("ParentId"),(String)so.getField("Name")+".pgp",attachments));
-				} catch (Exception e) {
-					e.printStackTrace();
-				}	
-			}
-			
-			// add attachment to report in salesforce
-			System.out.println("adding salesforce attachment...");
+			System.out.println("inserting new attachment__c child attachment records...");
 			try {
-				sc.create(lstSObj);
-			} catch (ConnectionException e) {
+				sc.create(insertFiles);	
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			*/
+			
 			
 			connector.disconnect();
 		} catch (SftpException e){
@@ -240,24 +239,21 @@ public class PullDocuments extends HttpServlet{
 	    return sb.toString().isEmpty() ? "{}" : sb.toString();
 	}
 	
-	private ArrayList<SObject> query(String ids) throws ConnectionException{
-		System.out.println("querying salesforce...");
+	private ArrayList<SObject> query(ArrayList<String> ids) throws ConnectionException{
+		System.out.println("querying new attachment__c records...");
 		String idFilter;
-		if(ids.contains(",")){
-			String[] idParts = ids.split(",");
-			idFilter = " Id IN(";
-			for(String attId : idParts){
-				if(idFilter == " Id IN("){
-					idFilter = idFilter + "'" + attId + "'";
-				}else {
-					idFilter = idFilter + ",'" + attId + "'";
-				}
+
+		idFilter = " Id IN(";
+		for(String attId : ids){
+			if(idFilter == " Id IN("){
+				idFilter = idFilter + "'" + attId + "'";
+			}else {
+				idFilter = idFilter + ",'" + attId + "'";
 			}
-			idFilter = idFilter + ")";
-		} else {
-			idFilter = " Id = '"+ids+"'";
 		}
-		String soql = "SELECT Id, Name, ParentId, Body FROM Attachment WHERE "+idFilter;
+		idFilter = idFilter + ")";
+
+		String soql = "SELECT Id, Name FROM Attachment__c WHERE "+idFilter;
 		return sc.query(soql);
 	}
 	
