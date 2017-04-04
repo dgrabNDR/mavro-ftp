@@ -108,20 +108,16 @@ public class PullDocuments extends HttpServlet{
 						} catch (Exception e) {
 						    System.out.println("/E:/Opex/MavroArchive/"+dayFolder.getFilename()+" not found");
 						}
-
 						if (attrs == null) {
 						    System.out.println("Creating dir "+dayFolder.getFilename());
 						    connector.sftpChannel.mkdir("/E:/Opex/MavroArchive/"+dayFolder.getFilename());
-						}
-						
+						}						
 						String src = "/E:/Opex/Mavro/"+dayFolder.getFilename()+"/"+batchFolder.getFilename();
 						String dest = "/E:/Opex/MavroArchive/"+dayFolder.getFilename()+"/"+batchFolder.getFilename();
-						
-						
 						System.out.println("moving folder "+dayFolder.getFilename()+"/"+batchFolder.getFilename()+" and files to archive...");
 						connector.sftpChannel.rename(src,dest);
 					} else {
-						System.out.println("deleting folder: "+batchFolder.getFilename());
+						System.out.println("deleting non-batch folder: "+batchFolder.getFilename());
 						connector.sftpChannel.rm("/E:/Opex/Mavro/"+dayFolder.getFilename()+"/"+batchFolder.getFilename());
 					}
 				}
@@ -133,54 +129,58 @@ public class PullDocuments extends HttpServlet{
 					System.out.println(fld.getFilename());
 				}
 				if(lstFolder.size() == 0){
-					System.out.println("no files left in dir.  deleting...");
-					//connector.sftpChannel.rm("/E:/Opex/Mavro/"+dayFolder.getFilename());
+					System.out.println("dayFolder is empty.  deleting...");
+					connector.sftpChannel.rm("/E:/Opex/Mavro/"+dayFolder.getFilename());
 				}
 			}
 			
-			System.out.println("inserting new attachment__c records...");
-			ArrayList<String> idLst = new ArrayList<String>();
-			try {//test
-				System.out.println("connecting to salesforce...");
-				sc = new SalesforceConnector(params.get("Username"),params.get("Password"),params.get("environment"));
-				sc.login();			
-				ArrayList<SaveResult> srLst = sc.create(lstSObj);				
-				for(SaveResult sr : srLst){
-					idLst.add(sr.getId());
+			if(lstSObj.size() > 0){
+				System.out.println("inserting new attachment__c records...");
+				ArrayList<String> idLst = new ArrayList<String>();
+				try {
+					System.out.println("connecting to salesforce...");
+					sc = new SalesforceConnector(params.get("Username"),params.get("Password"),params.get("environment"));
+					sc.login();			
+					ArrayList<SaveResult> srLst = sc.create(lstSObj);				
+					for(SaveResult sr : srLst){
+						idLst.add(sr.getId());
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			
-			// query new attachments
-			ArrayList<SObject> attachments = new ArrayList<SObject>();	
-			ArrayList<SObject> insertFiles = new ArrayList<SObject>();	
-			try {	
-				sc.login();
-				attachments = query(idLst);
-				System.out.println("queried "+attachments.size()+" attachments");
-				for(SObject so : attachments){					
-					File theFile = mapFiles.get((String)so.getField("Name"));
-					byte[] body = null;
-					
-					body = Files.readAllBytes(theFile.toPath());					
-					SObject sObj = new SObject("Attachment");
-					sObj.setField("ParentId", (String)so.getField("Id"));
-					sObj.setField("Name", (String)so.getField("Name"));					
-					sObj.setField("Body", body);
-					insertFiles.add(sObj);
+				
+				// query new attachments
+				ArrayList<SObject> attachments = new ArrayList<SObject>();	
+				ArrayList<SObject> insertFiles = new ArrayList<SObject>();	
+				try {	
+					sc.login();
+					attachments = query(idLst);
+					System.out.println("queried "+attachments.size()+" attachments");
+					for(SObject so : attachments){					
+						File theFile = mapFiles.get((String)so.getField("Name"));
+						byte[] body = null;
+						
+						body = Files.readAllBytes(theFile.toPath());					
+						SObject sObj = new SObject("Attachment");
+						sObj.setField("ParentId", (String)so.getField("Id"));
+						sObj.setField("Name", (String)so.getField("Name"));					
+						sObj.setField("Body", body);
+						insertFiles.add(sObj);
+					}
+				} catch (ConnectionException e1) {
+					e1.printStackTrace();
 				}
-			} catch (ConnectionException e1) {
-				e1.printStackTrace();
+				
+				System.out.println("inserting new attachment__c child attachment records...");
+				try {
+					sc.login();
+					sc.create(insertFiles);	
+				} catch (Exception e) {
+					e.printStackTrace();
+				}	
+			} else {
+				System.out.println("No new files found.");
 			}
-			
-			System.out.println("inserting new attachment__c child attachment records...");
-			try {
-				sc.login();
-				sc.create(insertFiles);	
-			} catch (Exception e) {
-				e.printStackTrace();
-			}		
 			
 			connector.disconnect();
 		} catch (SftpException e){
