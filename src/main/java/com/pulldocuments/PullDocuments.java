@@ -78,8 +78,7 @@ public class PullDocuments extends HttpServlet{
 				// display contents of day level directory
 				for(ChannelSftp.LsEntry batchFolder : lstBatch){
 					Integer count = 0;
-					if(batchFolder.getFilename().indexOf("Shortcut.lnk") == -1 || batchFolder.getFilename().indexOf("Thumbs.db") == -1){
-						System.out.println(batchFolder.getFilename().indexOf("Shortcut.lnk"));
+					if(batchFolder.getFilename().indexOf("Shortcut.lnk") == -1 && batchFolder.getFilename().indexOf("Thumbs.db") == -1){
 						System.out.println("opening batch folder: "+batchFolder.getFilename());
 						connector.sftpChannel.cd("/E:/Opex/Mavro/"+dayFolder.getFilename()+"/"+batchFolder.getFilename());
 						Vector<ChannelSftp.LsEntry> lstFiles = connector.sftpChannel.ls("*");
