@@ -75,14 +75,9 @@ public class PullDocuments extends HttpServlet{
 				connector.sftpChannel.cd("/E:/Opex/Mavro/"+dayFolder.getFilename());
 				Vector<ChannelSftp.LsEntry> lstBatch = connector.sftpChannel.ls("*");
 				// display contents of day level directory
-				Integer ndx = 0;
 				for(ChannelSftp.LsEntry batchFolder : lstBatch){
-					if(ndx == 0){
 					Integer count = 0;
-					if(batchFolder.getFilename().indexOf("Shortcut.lnk") >= -1 || batchFolder.getFilename().indexOf("Thumbs.db") >= -1){
-						System.out.println("deleting folder: "+batchFolder.getFilename());
-						connector.sftpChannel.rm("/E:/Opex/Mavro/"+dayFolder.getFilename()+"/"+batchFolder.getFilename());
-					} else {
+					if(batchFolder.getFilename().indexOf("Shortcut.lnk") == -1 || batchFolder.getFilename().indexOf("Thumbs.db") == -1){
 						System.out.println("opening batch folder: "+batchFolder.getFilename());
 						connector.sftpChannel.cd("/E:/Opex/Mavro/"+dayFolder.getFilename()+"/"+batchFolder.getFilename());
 						Vector<ChannelSftp.LsEntry> lstFiles = connector.sftpChannel.ls("*");
@@ -107,12 +102,13 @@ public class PullDocuments extends HttpServlet{
 							System.out.println("parsing xmlFile... ");
 							lstSObj.addAll(xmlToSObj(xmlFile));
 						}
-					}					
-					ndx++;
-					String src = "/E:/Opex/Mavro/"+dayFolder.getFilename()+"/"+batchFolder.getFilename();
-					String dest = "/E:/Opex/MavroArchive/"+dayFolder.getFilename()+"/"+batchFolder.getFilename();
-					System.out.println("moving folder "+dayFolder.getFilename()+"/"+batchFolder.getFilename()+" and files to archive...");
-					connector.sftpChannel.rename(src,dest);
+						String src = "/E:/Opex/Mavro/"+dayFolder.getFilename()+"/"+batchFolder.getFilename();
+						String dest = "/E:/Opex/MavroArchive/"+dayFolder.getFilename()+"/"+batchFolder.getFilename();
+						System.out.println("moving folder "+dayFolder.getFilename()+"/"+batchFolder.getFilename()+" and files to archive...");
+						connector.sftpChannel.rename(src,dest);
+					} else {
+						System.out.println("deleting folder: "+batchFolder.getFilename());
+						connector.sftpChannel.rm("/E:/Opex/Mavro/"+dayFolder.getFilename()+"/"+batchFolder.getFilename());
 					}
 				}
 				// move day folder to MavroArchive	
