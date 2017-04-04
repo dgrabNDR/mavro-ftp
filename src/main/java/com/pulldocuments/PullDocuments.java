@@ -119,6 +119,7 @@ public class PullDocuments extends HttpServlet{
 				sc = new SalesforceConnector(params.get("Username"),params.get("Password"),params.get("environment"));
 				ArrayList<SObject>  newLst = new ArrayList<SObject>();
 				newLst.add(lstSObj.get(0));
+				System.out.println(lstSObj.get(0));
 				ArrayList<SaveResult> srLst = sc.create(newLst);
 				for(SaveResult sr : srLst){
 					System.out.println("sr: "+sr.getId());
