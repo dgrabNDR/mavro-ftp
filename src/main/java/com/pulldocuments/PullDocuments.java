@@ -125,6 +125,10 @@ public class PullDocuments extends HttpServlet{
 				}
 			} catch (ConnectionException e) {
 				e.printStackTrace();
+			} catch (NullPointerException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 			
 			// do the things
