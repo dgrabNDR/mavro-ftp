@@ -80,6 +80,7 @@ public class PullDocuments extends HttpServlet{
 					if(ndx == 0){
 					Integer count = 0;
 					if(batchFolder.getFilename().indexOf("Shortcut.lnk") >= -1 || batchFolder.getFilename().indexOf("Thumbs.db") >= -1){
+						System.out.println("deleting folder: "+batchFolder.getFilename());
 						connector.sftpChannel.rm("/E:/Opex/Mavro/"+dayFolder.getFilename()+"/"+batchFolder.getFilename());
 					} else {
 						System.out.println("opening batch folder: "+batchFolder.getFilename());
