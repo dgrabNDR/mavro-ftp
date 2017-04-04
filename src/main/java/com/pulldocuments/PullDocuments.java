@@ -123,7 +123,7 @@ public class PullDocuments extends HttpServlet{
 				for(SaveResult sr : srLst){
 					System.out.println("sr: "+sr.getId());
 				}
-			} catch (ConnectionException e) {
+			} catch (ConnectionException e) {//test
 				e.printStackTrace();
 			} catch (NullPointerException e) {
 				e.printStackTrace();
