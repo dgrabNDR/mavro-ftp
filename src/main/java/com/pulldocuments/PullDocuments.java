@@ -117,7 +117,7 @@ public class PullDocuments extends HttpServlet{
 			
 			System.out.println("inserting new attachment__c records...");
 			ArrayList<String> idLst = new ArrayList<String>();
-			try {
+			try {//test
 				System.out.println("connecting to salesforce...");
 				sc = new SalesforceConnector(params.get("Username"),params.get("Password"),params.get("environment"));
 				sc.login();
