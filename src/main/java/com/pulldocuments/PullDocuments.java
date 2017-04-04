@@ -75,9 +75,10 @@ public class PullDocuments extends HttpServlet{
 				connector.sftpChannel.cd("/E:/Opex/Mavro/"+dayFolder.getFilename());
 				Vector<ChannelSftp.LsEntry> lstBatch = connector.sftpChannel.ls("*");
 				// display contents of day level directory
-				Integer count = 0;
+				Integer ndx = 0;
 				for(ChannelSftp.LsEntry batchFolder : lstBatch){
-					if(count == 0){
+					if(ndx == 0){
+					Integer count = 0;
 					if(batchFolder.getFilename().indexOf("Shortcut.lnk") == -1 && batchFolder.getFilename().indexOf("Thumbs.db") == -1){
 						System.out.println("opening batch folder: "+batchFolder.getFilename());
 						connector.sftpChannel.cd("/E:/Opex/Mavro/"+dayFolder.getFilename()+"/"+batchFolder.getFilename());
@@ -85,6 +86,7 @@ public class PullDocuments extends HttpServlet{
 						System.out.println("pulling contents of batch folder...");
 						// display contents of batch level directory
 						File xmlFile = null;
+						
 						for(ChannelSftp.LsEntry file : lstFiles){
 							if(file.getFilename().indexOf(".xml") == -1){
 								//System.out.println("found pdf file: "+file.getFilename());
@@ -137,6 +139,7 @@ public class PullDocuments extends HttpServlet{
 			ArrayList<SObject> insertFiles = new ArrayList<SObject>();	
 			try {	
 				attachments = query(idLst);
+				sc.login();
 				System.out.println("queried "+attachments.size()+" attachments");
 				for(SObject so : attachments){					
 					File theFile = mapFiles.get((String)so.getField("Name"));
