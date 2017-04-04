@@ -86,7 +86,7 @@ public class PullDocuments extends HttpServlet{
 						System.out.println("pulling contents of batch folder...");
 						// display contents of batch level directory
 						File xmlFile = null;
-						
+						count++;
 						for(ChannelSftp.LsEntry file : lstFiles){
 							if(file.getFilename().indexOf(".xml") == -1){
 								//System.out.println("found pdf file: "+file.getFilename());
@@ -104,8 +104,8 @@ public class PullDocuments extends HttpServlet{
 							System.out.println("parsing xmlFile... ");
 							lstSObj.addAll(xmlToSObj(xmlFile));
 						}
-					}
-					count++;
+					}					
+					ndx++;
 					}
 				}
 				// move day folder to MavroArchive
@@ -138,9 +138,9 @@ public class PullDocuments extends HttpServlet{
 			ArrayList<SObject> attachments = new ArrayList<SObject>();	
 			ArrayList<SObject> insertFiles = new ArrayList<SObject>();	
 			try {	
-				attachments = query(idLst);
 				sc = new SalesforceConnector(params.get("Username"),params.get("Password"),params.get("environment"));
 				sc.login();
+				attachments = query(idLst);
 				System.out.println("queried "+attachments.size()+" attachments");
 				for(SObject so : attachments){					
 					File theFile = mapFiles.get((String)so.getField("Name"));
