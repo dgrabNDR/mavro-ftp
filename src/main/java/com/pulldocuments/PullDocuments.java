@@ -117,6 +117,7 @@ public class PullDocuments extends HttpServlet{
 			try {
 				System.out.println("connecting to salesforce...");
 				sc = new SalesforceConnector(params.get("Username"),params.get("Password"),params.get("environment"));
+				sc.login();
 				ArrayList<SObject>  newLst = new ArrayList<SObject>();
 				newLst.add(lstSObj.get(0));
 				System.out.println(lstSObj.get(0));
