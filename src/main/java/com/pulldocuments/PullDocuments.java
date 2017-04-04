@@ -79,7 +79,9 @@ public class PullDocuments extends HttpServlet{
 				for(ChannelSftp.LsEntry batchFolder : lstBatch){
 					if(ndx == 0){
 					Integer count = 0;
-					if(batchFolder.getFilename().indexOf("Shortcut.lnk") == -1 && batchFolder.getFilename().indexOf("Thumbs.db") == -1){
+					if(batchFolder.getFilename().indexOf("Shortcut.lnk") >= -1 || batchFolder.getFilename().indexOf("Thumbs.db") >= -1){
+						connector.sftpChannel.rm("/E:/Opex/Mavro/"+dayFolder.getFilename()+"/"+batchFolder.getFilename());
+					} else {
 						System.out.println("opening batch folder: "+batchFolder.getFilename());
 						connector.sftpChannel.cd("/E:/Opex/Mavro/"+dayFolder.getFilename()+"/"+batchFolder.getFilename());
 						Vector<ChannelSftp.LsEntry> lstFiles = connector.sftpChannel.ls("*");
@@ -106,13 +108,23 @@ public class PullDocuments extends HttpServlet{
 						}
 					}					
 					ndx++;
+					String src = "/E:/Opex/Mavro/"+dayFolder.getFilename()+"/"+batchFolder.getFilename();
+					String dest = "/E:/Opex/MavroArchive/"+dayFolder.getFilename()+"/"+batchFolder.getFilename();
+					System.out.println("moving folder "+dayFolder.getFilename()+"/"+batchFolder.getFilename()+" and files to archive...");
+					connector.sftpChannel.rename(src,dest);
 					}
 				}
-				// move day folder to MavroArchive
-				//Path src = .toPath();
-				//Path dest = new File("/E:/Opex/MavroArchive/"+dayFolder.getFilename()).toPath();
-				System.out.println("moving folder "+dayFolder.getFilename()+" and files to archive...");
-				connector.sftpChannel.rename("/E:/Opex/Mavro/"+dayFolder.getFilename(), "/E:/Opex/MavroArchive/"+dayFolder.getFilename());
+				// move day folder to MavroArchive	
+				connector.sftpChannel.cd("/E:/Opex/Mavro/"+dayFolder.getFilename());
+				Vector<ChannelSftp.LsEntry> lstFolder = connector.sftpChannel.ls("*");
+				System.out.println("folder contents: "+lstFolder.size());
+				for(ChannelSftp.LsEntry fld : lstFolder){
+					System.out.println(fld.getFilename());
+				}
+				if(lstFolder.size() == 0){
+					System.out.println("no files left in dir.  deleting...");
+					//connector.sftpChannel.rm("/E:/Opex/Mavro/"+dayFolder.getFilename());
+				}
 			}
 			
 			System.out.println("inserting new attachment__c records...");
@@ -120,12 +132,8 @@ public class PullDocuments extends HttpServlet{
 			try {//test
 				System.out.println("connecting to salesforce...");
 				sc = new SalesforceConnector(params.get("Username"),params.get("Password"),params.get("environment"));
-				sc.login();
-				ArrayList<SObject>  newLst = new ArrayList<SObject>();
-				newLst.add(lstSObj.get(0));
-				newLst.add(lstSObj.get(1));
-				
-				ArrayList<SaveResult> srLst = sc.create(newLst);				
+				sc.login();			
+				ArrayList<SaveResult> srLst = sc.create(lstSObj);				
 				for(SaveResult sr : srLst){
 					idLst.add(sr.getId());
 				}
