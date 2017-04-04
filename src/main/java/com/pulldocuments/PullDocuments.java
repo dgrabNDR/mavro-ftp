@@ -203,7 +203,13 @@ public class PullDocuments extends HttpServlet{
 		Document doc = dBuilder.parse(xml);
 		doc.getDocumentElement().normalize();
 		//System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
-		NodeList nList = doc.getElementsByTagName("Transaction");
+		NodeList bList = doc.getElementsByTagName("Batch");
+		Element batchNode = (Element) bList.item(0);
+		String batchDate = batchNode.getAttribute("ProcessDate");
+		batchDate = batchDate.substring(6)+"-"+batchDate.substring(0,5);
+		System.out.println("Batch Date:" + batchDate);
+		
+		NodeList nList = doc.getElementsByTagName("Transaction");		
 		for (int temp = 0; temp < nList.getLength(); temp++) {
 			Node nNode = nList.item(temp);
 			//System.out.println("Current Element :" + nNode.getNodeName());
@@ -221,6 +227,7 @@ public class PullDocuments extends HttpServlet{
 					sObj.setField("Mavro_AccountBalance__c", eElement.getAttribute("AccountBalance"));
 					sObj.setField("Mavro_NewCharges__c", eElement.getAttribute("NewCharges"));
 					sObj.setField("Mavro_Offer__c", eElement.getAttribute("Offer"));
+					sObj.setField("Mavro_Batch_Date__c", batchDate);
 				lstSO.add(sObj);
 			}
 		}	
