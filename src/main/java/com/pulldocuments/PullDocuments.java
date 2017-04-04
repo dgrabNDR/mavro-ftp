@@ -123,12 +123,8 @@ public class PullDocuments extends HttpServlet{
 				System.out.println(lstSObj.get(0));
 				ArrayList<SaveResult> srLst = sc.create(newLst);
 				for(SaveResult sr : srLst){
-					System.out.println("sr: "+sr.getId());
+					System.out.println("sr: "+sr);
 				}
-			} catch (ConnectionException e) {//test
-				e.printStackTrace();
-			} catch (NullPointerException e) {
-				e.printStackTrace();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
