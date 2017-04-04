@@ -200,29 +200,16 @@ public class PullDocuments extends HttpServlet{
 				Element eElement = (Element) nNode;
 				String imgId =  eElement.getAttribute("ImageFile");
 				SObject sObj = new SObject("Attachment__c");	
-				/*if(mapFiles.containsKey(imgId)){
-					System.out.println("Found ImageFile: "+imgId); 
-					File scan = mapFiles.get(imgId);
-					byte[] body = null;
-					try {
-						body = Files.readAllBytes(scan.toPath());
-						sObj.setField("Name", scan.getName());
-						sObj.setField("Body", body);						
-					} catch (IOException e) {
-						e.printStackTrace();
-					}							
-				}*/
-				sObj.setField("Name", imgId);
-				sObj.setField("Mavro_OriginalCreditorName__c", eElement.getAttribute("OriginalCreditorName"));	
-				/*sObj.setField("Mavro_CurrentCreditorName__c", eElement.getAttribute("CurrentCreditorName"));
-				sObj.setField("Mavro_CollectionAgency__c", eElement.getAttribute("CollectionAgency"));
-				sObj.setField("Mavro_DocumentType__c", eElement.getAttribute("DocumentType"));
-				sObj.setField("Mavro_CustomerName__c", eElement.getAttribute("CustomerName"));
-				sObj.setField("Mavro_AccountNumber__c", eElement.getAttribute("AccountNumber"));
-				sObj.setField("Mavro_AccountBalance__c", eElement.getAttribute("AccountBalance"));
-				sObj.setField("Mavro_NewCharges__c", eElement.getAttribute("NewCharges"));
-				sObj.setField("Mavro_Offer__c", eElement.getAttribute("Offer"));
-				*///System.out.println(sObj);
+					sObj.setField("Name", imgId);
+					sObj.setField("Mavro_OriginalCreditorName__c", eElement.getAttribute("OriginalCreditorName"));	
+					sObj.setField("Mavro_CurrentCreditorName__c", eElement.getAttribute("CurrentCreditorName"));
+					sObj.setField("Mavro_CollectionAgency__c", eElement.getAttribute("CollectionAgency"));
+					sObj.setField("Mavro_DocumentType__c", eElement.getAttribute("DocumentType"));
+					sObj.setField("Mavro_CustomerName__c", eElement.getAttribute("CustomerName"));
+					sObj.setField("Mavro_AccountNumber__c", eElement.getAttribute("AccountNumber"));
+					sObj.setField("Mavro_AccountBalance__c", eElement.getAttribute("AccountBalance"));
+					sObj.setField("Mavro_NewCharges__c", eElement.getAttribute("NewCharges"));
+					sObj.setField("Mavro_Offer__c", eElement.getAttribute("Offer"));
 				lstSO.add(sObj);
 			}
 		}	

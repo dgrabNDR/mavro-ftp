@@ -40,15 +40,13 @@ public class SFTPConnector {
 			System.out.println("ip before fixie: "+str);
 			
 			// sets static ip addresses 
-			System.out.println("Normal IP Address => "+InetAddress.getLocalHost().getHostAddress());
-			System.out.println("setting up fixie...");
+			System.out.println("connecting to fixie...");
 			URL fixie = new URL("http://"+System.getenv("FIXIE_SOCKS_HOST"));
 			String fixieInfo = fixie.getUserInfo();
-			System.out.println("fixieURL ==> "+fixieInfo);
 			String[] fixieUserInfo = fixieInfo.split(":");
 			String fixieUser = fixieUserInfo[0];
 			String fixiePassword = fixieUserInfo[1];
-			System.out.println("fixie u: "+fixieUser+" ,p: "+fixiePassword);
+			System.out.println("fixie u: "+fixieUser+" / p: "+fixiePassword);
 			System.setProperty("socksProxyHost", fixie.getHost());
 			Authenticator.setDefault(new ProxyAuthenticator(fixieUser, fixiePassword));
 
@@ -62,6 +60,7 @@ public class SFTPConnector {
 			JSch jsch = new JSch();
 	        session = null;
 	        try {
+	        	System.out.println("connecting to ftp...");
 	            session = jsch.getSession(params.get("ftpuser"), params.get("ftphost"), 22);
 	            Properties prop = new Properties();
 	            prop.setProperty("StrictHostKeyChecking", "no");
