@@ -139,6 +139,7 @@ public class PullDocuments extends HttpServlet{
 			ArrayList<SObject> insertFiles = new ArrayList<SObject>();	
 			try {	
 				attachments = query(idLst);
+				sc = new SalesforceConnector(params.get("Username"),params.get("Password"),params.get("environment"));
 				sc.login();
 				System.out.println("queried "+attachments.size()+" attachments");
 				for(SObject so : attachments){					
@@ -158,11 +159,12 @@ public class PullDocuments extends HttpServlet{
 			
 			System.out.println("inserting new attachment__c child attachment records...");
 			try {
+				sc = new SalesforceConnector(params.get("Username"),params.get("Password"),params.get("environment"));
+				sc.login();
 				sc.create(insertFiles);	
 			} catch (Exception e) {
 				e.printStackTrace();
-			}
-			
+			}		
 			
 			connector.disconnect();
 		} catch (SftpException e){
