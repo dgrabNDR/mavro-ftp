@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Vector;
 
 import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.SftpATTRS;
 import com.jcraft.jsch.SftpException;
 import com.jcraft.jsch.ChannelSftp.LsEntry;
 
@@ -102,8 +103,22 @@ public class PullDocuments extends HttpServlet{
 							System.out.println("parsing xmlFile... ");
 							lstSObj.addAll(xmlToSObj(xmlFile));
 						}
+						SftpATTRS attrs=null;
+						try {
+						    attrs = connector.sftpChannel.stat("/E:/Opex/MavroArchive/"+dayFolder.getFilename());
+						} catch (Exception e) {
+						    System.out.println("/E:/Opex/MavroArchive/"+dayFolder.getFilename()+" not found");
+						}
+
+						if (attrs == null) {
+						    System.out.println("Creating dir "+dayFolder.getFilename());
+						    connector.sftpChannel.mkdir("/E:/Opex/MavroArchive/"+dayFolder.getFilename());
+						}
+						
 						String src = "/E:/Opex/Mavro/"+dayFolder.getFilename()+"/"+batchFolder.getFilename();
 						String dest = "/E:/Opex/MavroArchive/"+dayFolder.getFilename()+"/"+batchFolder.getFilename();
+						
+						
 						System.out.println("moving folder "+dayFolder.getFilename()+"/"+batchFolder.getFilename()+" and files to archive...");
 						connector.sftpChannel.rename(src,dest);
 					} else {
