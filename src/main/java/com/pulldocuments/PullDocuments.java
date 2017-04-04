@@ -109,10 +109,10 @@ public class PullDocuments extends HttpServlet{
 					}
 				}
 				// move day folder to MavroArchive
-				Path src = new File("/E:/Opex/Mavro/"+dayFolder.getFilename()).toPath();
-				Path dest = new File("/E:/Opex/MavroArchive/"+dayFolder.getFilename()).toPath();
-				//System.out.println("moving files to archive...");
-				//Files.move(src,dest);
+				//Path src = .toPath();
+				//Path dest = new File("/E:/Opex/MavroArchive/"+dayFolder.getFilename()).toPath();
+				System.out.println("moving folder "+dayFolder.getFilename()+" and files to archive...");
+				connector.sftpChannel.rename("/E:/Opex/Mavro/"+dayFolder.getFilename(), "/E:/Opex/MavroArchive/"+dayFolder.getFilename());
 			}
 			
 			System.out.println("inserting new attachment__c records...");
@@ -134,11 +134,9 @@ public class PullDocuments extends HttpServlet{
 			}
 			
 			// query new attachments
-			sc = new SalesforceConnector(params.get("Username"),params.get("Password"),params.get("environment"));
 			ArrayList<SObject> attachments = new ArrayList<SObject>();	
 			ArrayList<SObject> insertFiles = new ArrayList<SObject>();	
 			try {	
-				sc = new SalesforceConnector(params.get("Username"),params.get("Password"),params.get("environment"));
 				sc.login();
 				attachments = query(idLst);
 				System.out.println("queried "+attachments.size()+" attachments");
@@ -159,7 +157,6 @@ public class PullDocuments extends HttpServlet{
 			
 			System.out.println("inserting new attachment__c child attachment records...");
 			try {
-				sc = new SalesforceConnector(params.get("Username"),params.get("Password"),params.get("environment"));
 				sc.login();
 				sc.create(insertFiles);	
 			} catch (Exception e) {
