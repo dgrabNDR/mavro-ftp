@@ -75,71 +75,78 @@ public class PullDocuments extends HttpServlet{
 			
 			// display contents of top level directory
 			for(ChannelSftp.LsEntry dayFolder : topLevel){
-				System.out.println("opening day folder: "+dayFolder.getFilename());
-				connector.sftpChannel.cd("/E:/Opex/Mavro/"+dayFolder.getFilename());
-				Vector<ChannelSftp.LsEntry> lstBatch = connector.sftpChannel.ls("*");
-				// display contents of day level directory
-				for(ChannelSftp.LsEntry batchFolder : lstBatch){
-					Integer count = 0;
-					if(batchFolder.getFilename().indexOf("Shortcut.lnk") == -1 && batchFolder.getFilename().indexOf("Thumbs.db") == -1){
-						System.out.println("opening batch folder: "+batchFolder.getFilename());
-						connector.sftpChannel.cd("/E:/Opex/Mavro/"+dayFolder.getFilename()+"/"+batchFolder.getFilename());
-						Vector<ChannelSftp.LsEntry> lstFiles = connector.sftpChannel.ls("*");
-						System.out.println("pulling contents of batch folder...");
-						// display contents of batch level directory
-						File xmlFile = null;						
-						for(ChannelSftp.LsEntry file : lstFiles){
-							if(file.getFilename().indexOf(".xml") == -1){
-								//System.out.println("found pdf file: "+file.getFilename());
-								InputStream is = connector.sftpChannel.get(file.getFilename());
-								mapFiles.put(file.getFilename(), inputStreamToFile(is, file.getFilename()));
-								count++;
-							} else {
-								//System.out.println("found xml file: "+file.getFilename());
-								InputStream is = connector.sftpChannel.get(file.getFilename());
-								xmlFile = inputStreamToFile(is, file.getFilename());
+				if(dayFolder.getFilename().indexOf("Thumbs.db") > -1){
+					System.out.println("deleting "+dayFolder.getFilename());
+					connector.sftpChannel.rm("/E:/Opex/Mavro/"+dayFolder.getFilename());
+				} else {
+					System.out.println("opening day folder: "+dayFolder.getFilename());
+					connector.sftpChannel.cd("/E:/Opex/Mavro/"+dayFolder.getFilename());
+					Vector<ChannelSftp.LsEntry> lstBatch = connector.sftpChannel.ls("*");
+					// display contents of day level directory
+					for(ChannelSftp.LsEntry batchFolder : lstBatch){
+						Integer count = 0;
+						if(batchFolder.getFilename().indexOf("Shortcut.lnk") == -1 && batchFolder.getFilename().indexOf("Thumbs.db") == -1){
+							System.out.println("opening batch folder: "+batchFolder.getFilename());
+							connector.sftpChannel.cd("/E:/Opex/Mavro/"+dayFolder.getFilename()+"/"+batchFolder.getFilename());
+							Vector<ChannelSftp.LsEntry> lstFiles = connector.sftpChannel.ls("*");
+							System.out.println("pulling contents of batch folder...");
+							// display contents of batch level directory
+							File xmlFile = null;						
+							for(ChannelSftp.LsEntry file : lstFiles){
+								if(file.getFilename().indexOf(".xml") == -1){
+									//System.out.println("found pdf file: "+file.getFilename());
+									InputStream is = connector.sftpChannel.get(file.getFilename());
+									mapFiles.put(file.getFilename(), inputStreamToFile(is, file.getFilename()));
+									count++;
+								} else {
+									//System.out.println("found xml file: "+file.getFilename());
+									InputStream is = connector.sftpChannel.get(file.getFilename());
+									xmlFile = inputStreamToFile(is, file.getFilename());
+								}
 							}
+							System.out.println("pulled "+count+" pdf files");
+							if(xmlFile != null){
+								System.out.println("parsing xmlFile... ");
+								lstSObj.addAll(xmlToSObj(xmlFile));
+							}
+							SftpATTRS attrs=null;
+							try {
+							    attrs = connector.sftpChannel.stat("/E:/Opex/MavroArchive/"+dayFolder.getFilename());
+							} catch (Exception e) {
+							    System.out.println("/E:/Opex/MavroArchive/"+dayFolder.getFilename()+" not found");
+							}
+							if (attrs == null) {
+							    System.out.println("Creating dir "+dayFolder.getFilename());
+							    connector.sftpChannel.mkdir("/E:/Opex/MavroArchive/"+dayFolder.getFilename());
+							}						
+							String src = "/E:/Opex/Mavro/"+dayFolder.getFilename()+"/"+batchFolder.getFilename();
+							String dest = "/E:/Opex/MavroArchive/"+dayFolder.getFilename()+"/"+batchFolder.getFilename();
+							System.out.println("moving folder "+dayFolder.getFilename()+"/"+batchFolder.getFilename()+" and files to archive...");
+							connector.sftpChannel.rename(src,dest);
+						} else {
+							System.out.println("deleting non-batch folder: "+batchFolder.getFilename());
+							connector.sftpChannel.rm("/E:/Opex/Mavro/"+dayFolder.getFilename()+"/"+batchFolder.getFilename());
 						}
-						System.out.println("pulled "+count+" pdf files");
-						if(xmlFile != null){
-							System.out.println("parsing xmlFile... ");
-							lstSObj.addAll(xmlToSObj(xmlFile));
-						}
-						SftpATTRS attrs=null;
-						try {
-						    attrs = connector.sftpChannel.stat("/E:/Opex/MavroArchive/"+dayFolder.getFilename());
-						} catch (Exception e) {
-						    System.out.println("/E:/Opex/MavroArchive/"+dayFolder.getFilename()+" not found");
-						}
-						if (attrs == null) {
-						    System.out.println("Creating dir "+dayFolder.getFilename());
-						    connector.sftpChannel.mkdir("/E:/Opex/MavroArchive/"+dayFolder.getFilename());
-						}						
-						String src = "/E:/Opex/Mavro/"+dayFolder.getFilename()+"/"+batchFolder.getFilename();
-						String dest = "/E:/Opex/MavroArchive/"+dayFolder.getFilename()+"/"+batchFolder.getFilename();
-						System.out.println("moving folder "+dayFolder.getFilename()+"/"+batchFolder.getFilename()+" and files to archive...");
-						connector.sftpChannel.rename(src,dest);
-					} else {
-						System.out.println("deleting non-batch folder: "+batchFolder.getFilename());
-						connector.sftpChannel.rm("/E:/Opex/Mavro/"+dayFolder.getFilename()+"/"+batchFolder.getFilename());
 					}
-				}
-				// move day folder to MavroArchive	
-				connector.sftpChannel.cd("/E:/Opex/Mavro/");
-				Vector<ChannelSftp.LsEntry> lstFolder = connector.sftpChannel.ls("*");
-				System.out.println("/E:/Opex/Mavro/ folder contents: "+lstFolder.size());
-				for(ChannelSftp.LsEntry fld : lstFolder){
-					System.out.println(fld.getFilename());
-					if(fld.getFilename() == dayFolder.getFilename()){
-						System.out.println("dayFolder is empty.  deleting...");
-						SftpATTRS attrs = null;
-						try {
-						    attrs = connector.sftpChannel.stat("/E:/Opex/Mavro/"+dayFolder.getFilename());
-						} catch (Exception e) {
-						    System.out.println("/E:/Opex/Mavro/"+dayFolder.getFilename()+" not found");
-						}
-						if(attrs != null) {
-							connector.sftpChannel.rm("/E:/Opex/Mavro/"+dayFolder.getFilename());
+					// move day folder to MavroArchive	
+					connector.sftpChannel.cd("/E:/Opex/Mavro/");
+					Vector<ChannelSftp.LsEntry> lstFolder = connector.sftpChannel.ls("*");
+					System.out.println("/E:/Opex/Mavro/ folder contents: "+lstFolder.size());
+					for(ChannelSftp.LsEntry fld : lstFolder){
+						System.out.println("fld "+fld.getFilename());
+						System.out.println("day "+dayFolder.getFilename());
+						if( fld.getFilename() == dayFolder.getFilename() || fld.getFilename().indexOf("Thumbs.db") > -1){
+							System.out.println("deleting "+fld.getFilename()+"...");
+							SftpATTRS attrs = null;
+							try {
+							    attrs = connector.sftpChannel.stat("/E:/Opex/Mavro/"+dayFolder.getFilename());
+							} catch (Exception e) {
+							    System.out.println("/E:/Opex/Mavro/"+dayFolder.getFilename()+" not found");
+							}
+							if(attrs != null) {
+								connector.sftpChannel.rm("/E:/Opex/Mavro/"+dayFolder.getFilename());
+							}
+							break;
 						}
 					}
 				}
