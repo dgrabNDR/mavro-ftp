@@ -29,7 +29,7 @@ public class SFTPConnector {
 		params = p;
 	}
 	
-	public string connect(){
+	public String connect(){
 		
 		try{
 			URL connection = new URL("http://checkip.amazonaws.com/");
