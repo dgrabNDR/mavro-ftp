@@ -237,7 +237,7 @@ public class PullDocuments extends HttpServlet{
 
 		String[] bdParts = batchNode.getAttribute("ProcessDate").split("-");		
 		GregorianCalendar batchDate = new GregorianCalendar();
-		batchDate.set(Integer.parseInt(bdParts[2]), Integer.parseInt(bdParts[0]), Integer.parseInt(bdParts[1]));
+		batchDate.set(Integer.parseInt(bdParts[2]), Integer.parseInt(bdParts[0])-1, Integer.parseInt(bdParts[1]));
 
 		NodeList nList = doc.getElementsByTagName("Transaction");		
 		for (int temp = 0; temp < nList.getLength(); temp++) {
