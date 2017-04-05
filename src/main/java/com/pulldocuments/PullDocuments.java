@@ -233,7 +233,7 @@ public class PullDocuments extends HttpServlet{
 					sObj.setField("Mavro_AccountBalance__c", eElement.getAttribute("AccountBalance"));
 					sObj.setField("Mavro_NewCharges__c", eElement.getAttribute("NewCharges"));
 					sObj.setField("Mavro_Offer__c", eElement.getAttribute("Offer"));
-					sObj.setField("Mavro_Batch_Date__c", batchDate+"T00:00:01.000Z");
+					sObj.setField("Mavro_Batch_Date__c", batchDate);
 				lstSO.add(sObj);
 			}
 		}	
