@@ -47,7 +47,10 @@ public class PullDocuments extends HttpServlet{
 	HashMap<String,File> mapFiles = new HashMap<String,File>();	
 	
 	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws  IOException {
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		resp.getWriter().write("this is the response");
+		resp.getWriter().flush();
+		resp.getWriter().close();
 		Gson gson = new Gson();
 		Map<String,String> parameters = new HashMap<String,String>();		
 		String paramStr = getBody(req);
