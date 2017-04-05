@@ -142,7 +142,9 @@ public class PullDocuments extends HttpServlet{
 					sc.login();			
 					ArrayList<SaveResult> srLst = sc.create(lstSObj);				
 					for(SaveResult sr : srLst){
-						idLst.add(sr.getId());
+						if(sr.isSuccess()){
+							idLst.add(sr.getId());
+						}
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
