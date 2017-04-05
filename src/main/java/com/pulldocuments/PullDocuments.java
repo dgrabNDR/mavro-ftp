@@ -178,6 +178,8 @@ public class PullDocuments extends HttpServlet{
 					} catch (Exception e) {
 						e.printStackTrace();
 					}	
+					
+					
 				} else {
 					System.out.println("error inserting attachment__c records...");
 				}
@@ -195,7 +197,7 @@ public class PullDocuments extends HttpServlet{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
-			resp.getWriter().write(errorMsg);
+			resp.getWriter().write(errorMsg != null ? errorMsg : "success");
 			resp.getWriter().flush();
 			resp.getWriter().close();
 		}
