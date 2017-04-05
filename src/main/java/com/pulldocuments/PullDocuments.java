@@ -130,26 +130,6 @@ public class PullDocuments extends HttpServlet{
 					}
 					connector.sftpChannel.cd("/E:/Opex/Mavro/");
 					connector.sftpChannel.rmdir("/E:/Opex/Mavro/"+dayFolder.getFilename());
-					/*Vector<ChannelSftp.LsEntry> lstFolder = connector.sftpChannel.ls("*");
-					System.out.println("/E:/Opex/Mavro/ folder contents: "+lstFolder.size());
-					for(ChannelSftp.LsEntry fld : lstFolder){
-						System.out.println("fld "+fld.getFilename());
-						System.out.println("day "+dayFolder.getFilename());
-						System.out.println((String) dayFolder.getFilename() == (String) fld.getFilename() );
-						if( fld.getFilename() == dayFolder.getFilename() || fld.getFilename().indexOf("Thumbs.db") > -1){
-							System.out.println("deleting "+fld.getFilename()+"...");
-							//SftpATTRS attrs = null;
-							//try {
-							//    attrs = connector.sftpChannel.stat("/E:/Opex/Mavro/"+dayFolder.getFilename());
-							//} catch (Exception e) {
-							//    System.out.println("/E:/Opex/Mavro/"+dayFolder.getFilename()+" not found");
-							//}
-							//if(attrs != null) {
-								
-							//}
-							break;
-						}
-					}*/
 				}
 			}
 			
@@ -246,7 +226,7 @@ public class PullDocuments extends HttpServlet{
 					sObj.setField("Mavro_AccountBalance__c", eElement.getAttribute("AccountBalance"));
 					sObj.setField("Mavro_NewCharges__c", eElement.getAttribute("NewCharges"));
 					sObj.setField("Mavro_Offer__c", eElement.getAttribute("Offer"));
-					sObj.setField("Mavro_Batch_Date__c", batchDate);
+					sObj.setField("Mavro_Batch_Date__c", batchDate+"T00:00:01.000Z");
 				lstSO.add(sObj);
 			}
 		}	
