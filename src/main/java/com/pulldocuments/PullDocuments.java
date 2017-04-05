@@ -139,6 +139,8 @@ public class PullDocuments extends HttpServlet{
 					for(SaveResult sr : srLst){
 						if(sr.isSuccess()){
 							idLst.add(sr.getId());
+						} else {
+							System.out.println(sr);
 						}
 					}
 				} catch (Exception e) {
@@ -146,34 +148,38 @@ public class PullDocuments extends HttpServlet{
 				}
 				
 				// query new attachments
-				ArrayList<SObject> attachments = new ArrayList<SObject>();	
-				ArrayList<SObject> insertFiles = new ArrayList<SObject>();	
-				try {	
-					sc.login();
-					attachments = query(idLst);
-					System.out.println("queried "+attachments.size()+" attachments");
-					for(SObject so : attachments){					
-						File theFile = mapFiles.get((String)so.getField("Name"));
-						byte[] body = null;
-						
-						body = Files.readAllBytes(theFile.toPath());					
-						SObject sObj = new SObject("Attachment");
-						sObj.setField("ParentId", (String)so.getField("Id"));
-						sObj.setField("Name", (String)so.getField("Name"));					
-						sObj.setField("Body", body);
-						insertFiles.add(sObj);
+				if(idLst.size() > 0){
+					ArrayList<SObject> attachments = new ArrayList<SObject>();	
+					ArrayList<SObject> insertFiles = new ArrayList<SObject>();	
+					try {	
+						sc.login();
+						attachments = query(idLst);
+						System.out.println("queried "+attachments.size()+" attachments");
+						for(SObject so : attachments){					
+							File theFile = mapFiles.get((String)so.getField("Name"));
+							byte[] body = null;
+							
+							body = Files.readAllBytes(theFile.toPath());					
+							SObject sObj = new SObject("Attachment");
+							sObj.setField("ParentId", (String)so.getField("Id"));
+							sObj.setField("Name", (String)so.getField("Name"));					
+							sObj.setField("Body", body);
+							insertFiles.add(sObj);
+						}
+					} catch (ConnectionException e1) {
+						e1.printStackTrace();
 					}
-				} catch (ConnectionException e1) {
-					e1.printStackTrace();
+					
+					System.out.println("inserting new attachment__c child attachment records...");
+					try {
+						sc.login();
+						sc.create(insertFiles);	
+					} catch (Exception e) {
+						e.printStackTrace();
+					}	
+				} else {
+					System.out.println("error inserting attachment__c records...");
 				}
-				
-				System.out.println("inserting new attachment__c child attachment records...");
-				try {
-					sc.login();
-					sc.create(insertFiles);	
-				} catch (Exception e) {
-					e.printStackTrace();
-				}	
 			} else {
 				System.out.println("No new files found.");
 			}
