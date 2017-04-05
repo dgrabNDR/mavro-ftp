@@ -48,9 +48,6 @@ public class PullDocuments extends HttpServlet{
 	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-		resp.getWriter().write("this is the response");
-		resp.getWriter().flush();
-		resp.getWriter().close();
 		Gson gson = new Gson();
 		Map<String,String> parameters = new HashMap<String,String>();		
 		String paramStr = getBody(req);
@@ -66,8 +63,9 @@ public class PullDocuments extends HttpServlet{
 		SFTPConnector connector = new SFTPConnector();
 		connector.start(params);
 		ArrayList<SObject> lstSObj = new ArrayList<SObject>();
+		String errorMsg = null;
 		try{
-			connector.connect();
+			errorMsg = connector.connect();
 			
 			connector.sftpChannel.cd("/E:/Opex/Mavro");
 			System.out.println("pwd: "+connector.sftpChannel.pwd());
@@ -75,10 +73,7 @@ public class PullDocuments extends HttpServlet{
 			
 			// display contents of top level directory
 			for(ChannelSftp.LsEntry dayFolder : topLevel){
-				if(dayFolder.getFilename().indexOf("Thumbs.db") > -1){
-					//System.out.println("deleting "+dayFolder.getFilename());
-					//connector.sftpChannel.rmdir(dayFolder.getFilename());
-				} else {
+				if(dayFolder.getFilename().indexOf("Thumbs.db") == -1){
 					System.out.println("opening day folder: "+dayFolder.getFilename());
 					connector.sftpChannel.cd("/E:/Opex/Mavro/"+dayFolder.getFilename());
 					Vector<ChannelSftp.LsEntry> lstBatch = connector.sftpChannel.ls("*");
@@ -192,7 +187,11 @@ public class PullDocuments extends HttpServlet{
 		} catch (SAXException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} finally {}
+		} finally {
+			resp.getWriter().write(errorMsg);
+			resp.getWriter().flush();
+			resp.getWriter().close();
+		}
 		
 	}
 	

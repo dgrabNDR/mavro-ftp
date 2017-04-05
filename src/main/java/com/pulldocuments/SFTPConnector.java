@@ -29,7 +29,7 @@ public class SFTPConnector {
 		params = p;
 	}
 	
-	public void connect(){
+	public string connect(){
 		
 		try{
 			URL connection = new URL("http://checkip.amazonaws.com/");
@@ -75,13 +75,14 @@ public class SFTPConnector {
 	            sftpChannel = (ChannelSftp) channel;	            
 	            System.out.println("connected!");
 	        } catch (JSchException e) {
-	        	System.out.println("channel is down");
-	            e.printStackTrace();  
+	        	return "channel is down";
+	            //e.printStackTrace();  
 	        }
 		}
 		catch(Exception ex){
 			ex.printStackTrace();
 		}
+		return null;
 	}
 	
 	public void disconnect(){
