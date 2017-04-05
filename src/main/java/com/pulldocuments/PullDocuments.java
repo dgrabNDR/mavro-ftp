@@ -134,15 +134,15 @@ public class PullDocuments extends HttpServlet{
 				if(lstFolder.size() == 0){
 					System.out.println("dayFolder is empty.  deleting...");
 					connector.sftpChannel.cd("/E:/Opex/Mavro/");
-					//SftpATTRS attrs = null;
-					//try {
-					//    attrs = connector.sftpChannel.stat("/E:/Opex/Mavro/"+dayFolder.getFilename());
-					//} catch (Exception e) {
-					//    System.out.println("/E:/Opex/Mavro/"+dayFolder.getFilename()+" not found");
-					//}
-					//if(attrs != null) {
+					SftpATTRS attrs = null;
+					try {
+					    attrs = connector.sftpChannel.stat("/E:/Opex/Mavro/"+dayFolder.getFilename());
+					} catch (Exception e) {
+					    System.out.println("/E:/Opex/Mavro/"+dayFolder.getFilename()+" not found");
+					}
+					if(attrs != null) {
 						connector.sftpChannel.rm("/E:/Opex/Mavro/"+dayFolder.getFilename());
-					//}
+					}
 				}
 			}
 			
