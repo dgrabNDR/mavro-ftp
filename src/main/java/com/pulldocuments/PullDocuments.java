@@ -76,8 +76,8 @@ public class PullDocuments extends HttpServlet{
 			// display contents of top level directory
 			for(ChannelSftp.LsEntry dayFolder : topLevel){
 				if(dayFolder.getFilename().indexOf("Thumbs.db") > -1){
-					System.out.println("deleting "+dayFolder.getFilename());
-					connector.sftpChannel.rmdir(dayFolder.getFilename());
+					//System.out.println("deleting "+dayFolder.getFilename());
+					//connector.sftpChannel.rmdir(dayFolder.getFilename());
 				} else {
 					System.out.println("opening day folder: "+dayFolder.getFilename());
 					connector.sftpChannel.cd("/E:/Opex/Mavro/"+dayFolder.getFilename());
