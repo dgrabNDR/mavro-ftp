@@ -77,7 +77,7 @@ public class PullDocuments extends HttpServlet{
 			for(ChannelSftp.LsEntry dayFolder : topLevel){
 				if(dayFolder.getFilename().indexOf("Thumbs.db") > -1){
 					System.out.println("deleting "+dayFolder.getFilename());
-					connector.sftpChannel.rm("/E:/Opex/Mavro/"+dayFolder.getFilename());
+					connector.sftpChannel.rm(dayFolder.getFilename());
 				} else {
 					System.out.println("opening day folder: "+dayFolder.getFilename());
 					connector.sftpChannel.cd("/E:/Opex/Mavro/"+dayFolder.getFilename());
@@ -135,6 +135,7 @@ public class PullDocuments extends HttpServlet{
 					for(ChannelSftp.LsEntry fld : lstFolder){
 						System.out.println("fld "+fld.getFilename());
 						System.out.println("day "+dayFolder.getFilename());
+						System.out.println((String) dayFolder.getFilename() == (String) fld.getFilename() );
 						if( fld.getFilename() == dayFolder.getFilename() || fld.getFilename().indexOf("Thumbs.db") > -1){
 							System.out.println("deleting "+fld.getFilename()+"...");
 							SftpATTRS attrs = null;
