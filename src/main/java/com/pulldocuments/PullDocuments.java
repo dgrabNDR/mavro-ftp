@@ -144,7 +144,7 @@ public class PullDocuments extends HttpServlet{
 							System.out.println(sr);
 						}
 					}
-				} catch (Exception e) {
+				} catch (Exception e) { 
 					e.printStackTrace();
 				}
 				
