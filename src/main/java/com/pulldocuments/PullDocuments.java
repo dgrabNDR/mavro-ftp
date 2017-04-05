@@ -10,6 +10,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
@@ -212,9 +213,12 @@ public class PullDocuments extends HttpServlet{
 		NodeList bList = doc.getElementsByTagName("Batch");
 		Element batchNode = (Element) bList.item(0);
 		String batchDate = batchNode.getAttribute("ProcessDate");
-		batchDate = batchDate.substring(6)+"-"+batchDate.substring(0,5);
 		System.out.println("Batch Date:" + batchDate);
+		String[] bdParts = batchDate.split("-");
 		
+		GregorianCalendar myBatchDate = new GregorianCalendar();
+		myBatchDate.set(Integer.parseInt(bdParts[2]), Integer.parseInt(bdParts[0]), Integer.parseInt(bdParts[1]));
+		System.out.println("Batch Date:" + batchDate);
 		NodeList nList = doc.getElementsByTagName("Transaction");		
 		for (int temp = 0; temp < nList.getLength(); temp++) {
 			Node nNode = nList.item(temp);
@@ -233,7 +237,7 @@ public class PullDocuments extends HttpServlet{
 					sObj.setField("Mavro_AccountBalance__c", eElement.getAttribute("AccountBalance"));
 					sObj.setField("Mavro_NewCharges__c", eElement.getAttribute("NewCharges"));
 					sObj.setField("Mavro_Offer__c", eElement.getAttribute("Offer"));
-					sObj.setField("Mavro_Batch_Date__c", batchDate);
+					sObj.setField("Mavro_Batch_Date__c", myBatchDate);
 				lstSO.add(sObj);
 			}
 		}	
