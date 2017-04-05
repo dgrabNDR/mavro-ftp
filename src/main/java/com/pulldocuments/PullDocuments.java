@@ -115,17 +115,17 @@ public class PullDocuments extends HttpServlet{
 							    System.out.println("Creating dir "+dayFolder.getFilename());
 							    connector.sftpChannel.mkdir("/E:/Opex/MavroArchive/"+dayFolder.getFilename());
 							}						
-							String src = "/E:/Opex/Mavro/"+dayFolder.getFilename()+"/"+batchFolder.getFilename();
-							String dest = "/E:/Opex/MavroArchive/"+dayFolder.getFilename()+"/"+batchFolder.getFilename();
-							System.out.println("moving folder "+dayFolder.getFilename()+"/"+batchFolder.getFilename()+" and files to archive...");
-							connector.sftpChannel.rename(src,dest);
+							//String src = "/E:/Opex/Mavro/"+dayFolder.getFilename()+"/"+batchFolder.getFilename();
+							//String dest = "/E:/Opex/MavroArchive/"+dayFolder.getFilename()+"/"+batchFolder.getFilename();
+							//System.out.println("moving folder "+dayFolder.getFilename()+"/"+batchFolder.getFilename()+" and files to archive...");
+							//connector.sftpChannel.rename(src,dest);
 						} else {
 							System.out.println("deleting non-batch folder: "+batchFolder.getFilename());
 							connector.sftpChannel.rm("/E:/Opex/Mavro/"+dayFolder.getFilename()+"/"+batchFolder.getFilename());
 						}
 					}
-					connector.sftpChannel.cd("/E:/Opex/Mavro/");
-					connector.sftpChannel.rmdir("/E:/Opex/Mavro/"+dayFolder.getFilename());
+					//connector.sftpChannel.cd("/E:/Opex/Mavro/");
+					//connector.sftpChannel.rmdir("/E:/Opex/Mavro/"+dayFolder.getFilename());
 				}
 			}
 			
@@ -144,7 +144,7 @@ public class PullDocuments extends HttpServlet{
 							System.out.println(sr);
 						}
 					}
-				} catch (Exception e) { 
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 				
@@ -172,12 +172,32 @@ public class PullDocuments extends HttpServlet{
 					}
 					
 					System.out.println("inserting new attachment__c child attachment records...");
+					Integer errCount = 0;
 					try {
 						sc.login();
-						sc.create(insertFiles);	
+						ArrayList<SaveResult> srLst = sc.create(insertFiles);
+						for(SaveResult sr : srLst){
+							if(!sr.isSuccess()){
+								errCount++;
+								System.out.println(sr);
+							}
+						}
 					} catch (Exception e) {
 						e.printStackTrace();
-					}	
+					}
+					
+					// move files to archive
+					if(errCount == 0){
+						
+						connector.sftpChannel.cd("/E:/Opex/Mavro");
+						Vector<ChannelSftp.LsEntry> root = connector.sftpChannel.ls("*");
+						for(ChannelSftp.LsEntry day : root){		
+							System.out.println("moving folder "+day.getFilename()+" and files to archive...");
+							String src = "/E:/Opex/Mavro/"+day.getFilename();
+							String dest = "/E:/Opex/MavroArchive/"+day.getFilename();
+							connector.sftpChannel.rename(src,dest);
+						}
+					}
 					
 					
 				} else {
@@ -214,13 +234,11 @@ public class PullDocuments extends HttpServlet{
 		//System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
 		NodeList bList = doc.getElementsByTagName("Batch");
 		Element batchNode = (Element) bList.item(0);
-		String batchDate = batchNode.getAttribute("ProcessDate");
-		System.out.println("Batch Date:" + batchDate);
-		String[] bdParts = batchDate.split("-");
-		
-		GregorianCalendar myBatchDate = new GregorianCalendar();
-		myBatchDate.set(Integer.parseInt(bdParts[2]), Integer.parseInt(bdParts[0]), Integer.parseInt(bdParts[1]));
-		System.out.println("Batch Date:" + batchDate);
+
+		String[] bdParts = batchNode.getAttribute("ProcessDate").split("-");		
+		GregorianCalendar batchDate = new GregorianCalendar();
+		batchDate.set(Integer.parseInt(bdParts[2]), Integer.parseInt(bdParts[0]), Integer.parseInt(bdParts[1]));
+
 		NodeList nList = doc.getElementsByTagName("Transaction");		
 		for (int temp = 0; temp < nList.getLength(); temp++) {
 			Node nNode = nList.item(temp);
@@ -239,7 +257,7 @@ public class PullDocuments extends HttpServlet{
 					sObj.setField("Mavro_AccountBalance__c", eElement.getAttribute("AccountBalance"));
 					sObj.setField("Mavro_NewCharges__c", eElement.getAttribute("NewCharges"));
 					sObj.setField("Mavro_Offer__c", eElement.getAttribute("Offer"));
-					sObj.setField("Mavro_Batch_Date__c", myBatchDate);
+					sObj.setField("Mavro_Batch_Date__c", batchDate);
 				lstSO.add(sObj);
 			}
 		}	
