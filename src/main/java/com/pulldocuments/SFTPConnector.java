@@ -75,6 +75,7 @@ public class SFTPConnector {
 	            sftpChannel = (ChannelSftp) channel;	            
 	            System.out.println("connected!");
 	        } catch (JSchException e) {
+	        	System.out.println("channel is down");
 	            e.printStackTrace();  
 	        }
 		}
