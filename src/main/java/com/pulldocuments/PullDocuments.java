@@ -77,7 +77,7 @@ public class PullDocuments extends HttpServlet{
 			for(ChannelSftp.LsEntry dayFolder : topLevel){
 				if(dayFolder.getFilename().indexOf("Thumbs.db") > -1){
 					System.out.println("deleting "+dayFolder.getFilename());
-					connector.sftpChannel.rm(dayFolder.getFilename());
+					connector.sftpChannel.rmdir(dayFolder.getFilename());
 				} else {
 					System.out.println("opening day folder: "+dayFolder.getFilename());
 					connector.sftpChannel.cd("/E:/Opex/Mavro/"+dayFolder.getFilename());
@@ -128,9 +128,9 @@ public class PullDocuments extends HttpServlet{
 							connector.sftpChannel.rm("/E:/Opex/Mavro/"+dayFolder.getFilename()+"/"+batchFolder.getFilename());
 						}
 					}
-					// move day folder to MavroArchive	
 					connector.sftpChannel.cd("/E:/Opex/Mavro/");
-					Vector<ChannelSftp.LsEntry> lstFolder = connector.sftpChannel.ls("*");
+					connector.sftpChannel.rmdir("/E:/Opex/Mavro/"+dayFolder.getFilename());
+					/*Vector<ChannelSftp.LsEntry> lstFolder = connector.sftpChannel.ls("*");
 					System.out.println("/E:/Opex/Mavro/ folder contents: "+lstFolder.size());
 					for(ChannelSftp.LsEntry fld : lstFolder){
 						System.out.println("fld "+fld.getFilename());
@@ -138,18 +138,18 @@ public class PullDocuments extends HttpServlet{
 						System.out.println((String) dayFolder.getFilename() == (String) fld.getFilename() );
 						if( fld.getFilename() == dayFolder.getFilename() || fld.getFilename().indexOf("Thumbs.db") > -1){
 							System.out.println("deleting "+fld.getFilename()+"...");
-							SftpATTRS attrs = null;
-							try {
-							    attrs = connector.sftpChannel.stat("/E:/Opex/Mavro/"+dayFolder.getFilename());
-							} catch (Exception e) {
-							    System.out.println("/E:/Opex/Mavro/"+dayFolder.getFilename()+" not found");
-							}
-							if(attrs != null) {
-								connector.sftpChannel.rm("/E:/Opex/Mavro/"+dayFolder.getFilename());
-							}
+							//SftpATTRS attrs = null;
+							//try {
+							//    attrs = connector.sftpChannel.stat("/E:/Opex/Mavro/"+dayFolder.getFilename());
+							//} catch (Exception e) {
+							//    System.out.println("/E:/Opex/Mavro/"+dayFolder.getFilename()+" not found");
+							//}
+							//if(attrs != null) {
+								
+							//}
 							break;
 						}
-					}
+					}*/
 				}
 			}
 			
