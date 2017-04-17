@@ -10,13 +10,13 @@
     </welcome-file-list>
     
   <servlet>
-    <servlet-name>convertpdf</servlet-name>
-    <servlet-class>main.java.com.convertpdf.ConvertPDF</servlet-class>
+    <servlet-name>encryptandupload</servlet-name>
+    <servlet-class>main.java.com.encryptandupload.EncryptAndUpload</servlet-class>
   </servlet>
 
   <servlet-mapping>
-    <servlet-name>convertpdf</servlet-name>
-    <url-pattern>/convertpdf</url-pattern>
+    <servlet-name>encryptandupload</servlet-name>
+    <url-pattern>/encryptandupload</url-pattern>
   </servlet-mapping>
 
 
